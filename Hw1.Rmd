@@ -1,0 +1,197 @@
+
+---
+title: "HW#1"
+author: "Bernard Romey"
+date: 'Due: Monday, January 19, 2015'
+output:
+  pdf_document:
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+  word_document: default
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+opts_chunk$set(fig.width=6, fig.height=4, fig.path='Figs/',
+               echo=FALSE, warning=FALSE, message=FALSE)
+```
+
+## Task 1.  Numerically summarize the data and answer the questions.  
+
+**Specifically,**
+
+- Summarize each numerical variable using commonly used summary statistics (e.g., mean, standard deviation, variance, etc.) (Table 1).  
+
+**What is variance?** 
+
+Variance is the average of the squared differences each observation is from the mean. 
+
+- Rank variance among all numerical variables (Table 1).  
+
+Sodium has the highest variance of all water quality variables (2.76x108) while pH has the lowest variance at 0.2 (Table 1).  Comparing the means and medians for all variables, it looks like most of the distributions are skewed to the right, with the exception of pH.  The largest difference between maximum and minimum observations is the total nitrogen concentration at 89736.2 mg/L.  
+
+**Can you use variance to determine which variable varies most?  If not, why?**  
+
+No, because it it not standardized.  Each variable may have a different measureing unit, therefore you would first need to convert it to a Z-score, then you can compare variances.
+
+- Characterize COND, PH, NTL, TURB, AG_TOT using summary statistics by “ECO3”.  
+
+**Are there any ecoregion-specific patterns?**  
+
+Yes, it looks like the water quality mean peramaters for the MT site are lower than both PL and XE (Table 2), with the PL site having the highest mean readings for all five variables.
+
+Turbidity, total nitrogen, and conductivity are much different for the MT ecoregion when compared to both the PL and XE ecoregions.  This may have something to do with the percent of agriculture in each ecoregion.  
+
+**How many sites have % forest cover in watersheds greater than 80% in each ecoregion (ECO3)?** 
+
+The MT ecoregion has 238 sites, the XE has 12, and the PL has 2 with a percent forest cover in watersheds greater than 80% (Table 3).  This may help explain the differences in water quality patterns for each specific ecoregion in table 2.  
+
+**How does conductivity (COND) and total nitrogen concentration (NTL) in these heavily forested sites differ among the 3 ecoregions?** 
+
+Mean total nitrogen concentration is higher in the XE ecoregion than both the MT and PL ecoregion at 368.3, 275.5, and 142.5 mg/L, respectively (Table 4).   Mean conductivity for all three ecoregions also exhibits this same pattern.
+
+##Task 2.  Graphically summarize the data.  Specifically,
+
+- Make separate plots: 1) boxplot, 2) histogram, 3) plot showing the mean and 95% confidence intervals of COND for each ecoregion (ECO3).  
+
+The three requested plots (boxplot, histogram, and error bar plot) are shows in figures 1, 2, and 3, respectively.  
+
+The box plot does a good job of summarizing the distribution of conductivity for each ecoregion (Figure 1).  It also shows the outliers and indicates to what extent the distribution of observations are skewed.  Since most variables do not have negative values, this would explain why the distributions are all skewed to the right.  Conductivity distribution is the largest for ecoregion PL, while ecoregion MT has the smallest distribution.   The IQR for Mt is the smallest of each of the three ecoregions, while the PL ecoregion has the largest IQR.
+
+The histogram in figure 2 shows the frequency distribution of conductivity for each ecoregion.  The majority of conductivity observations at all three ecoregion are primarily below 2500 uS/cm, with the highest frequency below 1000 uS/cm.
+
+The 95% confidence intervals for conductivity show that the variance for ecoregion PL is larger than both XE and MT (Figure 3).  The MT site has the lowest mean conductivity and the smallest variance of all three ecoregions.
+
+- Make x-y scatter plots between log-transformed TSS and log-transformed TURB for each ecoregion (ECO3) with fitted lines.
+
+```{r lm, results='hide'}
+require(dplyr)
+dta <-read.csv("wemap_na.csv")
+dta<-na.omit(dta)
+
+lm <- select(dta, ECO3, TSS, TURB)
+lm <- na.omit(lm)
+lm <- mutate(lm, ECO3,lnTSS = log(TSS), lnTURB = log(TURB))
+lm <- filter(lm, TSS>0)
+
+lmMT <- filter(lm, ECO3 =="MT")
+lmPL <- filter(lm, ECO3 =="PL")
+lmXE <- filter(lm, ECO3 =="XE")
+
+lm.MT <- lm(lmMT$lnTSS ~ lmMT$lnTURB - 1)# omitting intercept
+lm.PL <- lm(lmPL$lnTSS ~ lmPL$lnTURB - 1) 
+lm.XE <- lm(lmXE$lnTSS ~ lmXE$lnTURB - 1)
+
+lm.MT #.41
+lm.PL # 1.22
+lm.XE # 1.09
+```
+
+Turbidity and total suspended solids were observed in each ecoregion.  For comparison, both turbidity and total suspended solids observations were log transformed. The PL ecoregion had the largest rate of increase (slope 1.22), while the XE was slightly less (1.09), and the MT ecoregion had the lowest rate at 0.41 (Figure 4).  
+
+------
+
+**Table 1.  Summary statistics (mean, median, variance, standard deviaton, maximum, minimum) for numerical water quality variables (CA: Ca++ concentration (mg/L), COND: conductivity (µS/cm), Sodium: Na+ concentration (mg/L), ANC: Acid neutralizing capacity (mg CaCO3/L) ,  CL: Cl- concentration (mg/L), DOC: dissolved organic carbon (mg/L), NH4: NH4+ concentration (mg/L), NO3: NO3- concentration (mg/L), NTL: Total nitrogen concentration (mg/L),  SIO2: dissolved silica concentration (mg/L), TSS: Total suspended solids (mg/L), TURB: Turbidity (NTU), PH) ranked by variance.**
+
+
+```{r kable, results='asis'}
+
+dta<-select(dta,-c(YEAR, ECO10, ECO3, HUC4, FOR_TOT, AG_TOT, URB_TOT))
+
+mean <- summarise_each(dta,funs(mean))
+md<-summarise_each(dta,funs(median))
+mx<-summarise_each(dta,funs(max))
+mn<-summarise_each(dta,funs(min))
+var <- summarise_each(dta,funs(var))
+sd <- summarise_each(dta, funs(sd))
+
+dta_2<- bind_rows(mean, md, mx, mn,var, sd)     
+dta_2$new.col <- c("Mean","Median","Max","Min","Var","SD")
+dta_stat<-rename(dta_2,stat=new.col)
+dta_stat <- subset(dta_stat, select=c(stat,1:13))
+
+# Transpose df
+n <- dta_stat$stat # first remember the column names
+dta.T <- as.data.frame(t(dta_stat[,-1])) # transpose all but the first column (name)
+colnames(dta.T) <- n
+dta.T$myfactor <- factor(row.names(dta.T))
+dta.T <-arrange(dta.T,desc(Var))
+dta.T<-rename(dta.T,Factor=myfactor)
+dta.T<- subset(dta.T, select=c(Factor,1:6))
+
+kable((dta.T), digits=1)
+```
+
+
+**Table 2.  Variable means for COND: conductivity (µS/cm), pH, NTL: Total nitrogen concentration (mg/L), TURB: Turbidity (NTU), AG_TOT: % of agriculture in watershed in watershed by ecoregions (ECO3).**
+
+```{r kable2, results ='asis'}
+dta <-read.csv("wemap.csv")
+eco3<-dta%>%
+  group_by(ECO3)%>%
+  summarise(COND_Ave=mean(COND), pH_Ave = mean(PH), NTL_Ave = mean(NTL), TURB_Ave = mean(TURB), AgTOT_Ave = mean(AG_TOT))
+   
+knitr::kable(head(eco3), format = 'pandoc', digits=1, padding = 2, caption = 'Mean conductivity, pH, total nitrogen concentration, turbidity, and % of agrigulture in watershed')
+```
+
+
+
+```{r kable3, results='asis'}
+by_ECO3<- dta %>%
+  group_by(ECO3)%>%
+  filter(FOR_TOT >80)%>%
+  summarise(Number_site = n())
+knitr::kable(head(by_ECO3), format = 'pandoc', digits=1, padding = 2, caption = 'Number of % of forestland in watershed sites within each acoregion (ECO3) that have more than 80% forest cover.')
+
+```
+
+
+```{r kable4, results='asis'}
+require(dplyr)
+dif <- dta %>%
+  group_by(ECO3)%>%
+  filter(FOR_TOT >80)%>%
+  summarise(avgNTL = mean(NTL),
+          avgCOND = mean(COND))
+knitr::kable(head(dif), format = 'pandoc', digits=1, padding = 2, caption = 'Average COND: conductivity (µS/cm), and NTL: Total nitrogen concentration (mg/L) for each acoregion (ECO3) that have more than 80% forest cover.')
+```
+
+
+
+```{r p, fig.cap="Box plot of conductivity for each ecoregion (ECO3)"}
+dta <-read.csv("wemap.csv")
+require(ggplot2)
+p <- ggplot(dta, aes(factor(ECO3), COND))
+p + geom_boxplot()+geom_point()+ labs(list(title = "Conductivity for aech ecoregion", x = "Ecoregion (ECO3)", y = "Conductivity (uS/cm)"))
+```
+
+
+
+```{r p2, eval=FALSE, fig.cap="Plot with mean and 95% confidence intervals of conductivity for each ecoregion (ECO3)"}
+require(ggplot2)
+png(file = "bplot95ci.png")
+p2<-ggplot(dta,aes(y=COND, x=ECO3))
+p2 + stat_summary(fun.data ="mean_cl_normal", geom = "errorbar", colour = "darkgreen", width=0.2)+
+  stat_summary(fun.y=mean, geom="point", size=I(5)) + 
+  labs(list(title = "Conductivity 95% Confidence Interval", x = "Ecoregion (ECO3)", y = "Conductivity (uS/cm)"))
+dev.off()
+```
+*Insert plot into word that wont convert*
+
+```{r p3, fig.cap= "Conductivity histogram by ecoregion"}
+p3<-ggplot(dta,aes(COND))+theme(text=element_text(size=12))
+p3+geom_histogram(aes(fill=ECO3))+
+  labs(list(title = "Conductivity by ecoregion", x = "Conductivity (uS/cm)", y = "Frequency"))
+```
+
+
+```{r p4,fig.cap="Scatter plots of log transformed total suspended solids vs turbidity for each ecoregion"}
+require(ggplot2)
+p4<-ggplot(dta,aes(log(TSS+.25), log(TURB)))
+p4+geom_point(aes(shape=ECO3,color=ECO3))+geom_smooth(aes(group = ECO3), method="lm")+ labs(list(title = "Total suspended solids vs turbidity", x = "Ln Turbidity(NTU's)", y = "Ln Total suspended solids (mg/L)"))
+
+```
+
+
+

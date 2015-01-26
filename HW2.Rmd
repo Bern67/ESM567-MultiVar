@@ -1,0 +1,150 @@
+---
+title: "ESM567 HW#2"
+author: "Bernard Romey"
+date: "Friday, January 23, 2015"
+output:
+  pdf_document: default
+  word_document:
+    fig_caption: yes
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+opts_chunk$set(fig.width=5, fig.height=3.5, fig.path='Figs/',
+               echo=FALSE, warning=FALSE, message=FALSE)
+```
+
+```{r dta, echo=FALSE}
+dta <- read.csv("evenv.csv")
+dta <- na.omit(dta)
+library(dplyr)
+dta <- select(dta,-Site)
+dta <- scale(dta)
+```
+
+> 1.  Use ‘cor.matrix’ function to examine pair-wise relationships among all numerical variables.
+
+```{r cor.matrix, echo=FALSE}
+cor.matrix<-function(x,data=NA,cor.method="pearson",add1to1=F,...){
+  # panel.hist function adds the histogram
+options(warning=F)
+    panel.hist <- function(x)
+  {
+      usr <- par("usr")
+      on.exit(par(usr))
+      par(usr = c(usr[1:2], 0, 1.5) )
+      h <- hist(x, plot = FALSE,breaks=30)
+      breaks <- h$breaks
+      nB <- length(breaks)
+      y <- h$counts
+      y <- y/max(y)
+      rect(breaks[-nB], 0, breaks[-1], y, col="lightblue")
+      box()
+  }
+  panel.cor <- function(x, y, digits=2, prefix="", cex.cor)
+  {
+      usr <- par("usr")
+      on.exit(par(usr))
+      par(usr = c(0, 1, 0, 1))
+      r <- cor(x, y,method="spearman")
+      txt <- format(c(r, 0.123456789), digits=digits)[1]
+      txt <- paste(prefix, txt, sep="")
+      if(missing(cex.cor)) cex <- 0.8/strwidth(txt)
+      text(0.5, 0.5, txt, cex = cex * abs(r))
+  }
+  panel.smooth2<-function(x, y, bg = NA, pch = par("pch"),cex = 1, col.smooth = "red", span = 2/3,iter = 3,plot1to1=add1to1)
+  {
+    points(x, y, pch = pch, cex = cex,...)
+    ok <- is.finite(x) & is.finite(y)
+    if (any(ok)){
+        lines(stats::lowess(x[ok], y[ok], f = span, iter = iter), col = col.smooth)
+        }
+        if(plot1to1){
+          mn<-min(c(x,y),na.rm=T)
+          mx<-max(c(x,y),na.rm=T)
+          new.x<-seq(mn,mx,length.out=10)
+          points(new.x,new.x,type='l',col="blue",lwd=2)
+        }
+  }
+  if (class(x)=="formula"){
+    x<-model.frame(x,data=data)
+
+  }
+  pairs(x,upper.panel=panel.smooth2,lower.panel=panel.cor,diag.panel=panel.hist,
+        cex.labels = 1, font.labels=2)
+  options(warning=T)
+}
+```
+
+```{r pair-wise, echo=FALSE, eval=FALSE}
+cor.matrix(dta[,c(2:15)])  #As a guide, only show 5 variables to check each variable's distribution and pair-wise relationships
+```
+
+
+> 2.	Calculate a variance and covariance matrix with a scaled dataset (standardization).
+
+```{r kable, results='asis', eval=FALSE}
+#scaled data
+dta1 <-round(var(log(dta+1)),2) #variance/covariance matrix
+
+kable((dta1), digits=1)
+```
+
+
+> 3.	Run PCA using “princomp” in the MASS package with the scaled dataset.
+
+```{r scale,echo=TRUE,results='asis'}
+require(MASS)
+pca1<-princomp(scale(dta[,-c(3,9)],scale=F)) #run PCA on covariance and save all outputs in 'pca1'
+
+
+```
+
+
+> 4.	Run “broken.stick” function to decide how many PCs you should interpret.
+
+```{r brkStick, echo=FALSE}
+broken.stick <- function(p)
+  # Compute the expected values of the broken-stick distribution for 'p' pieces.
+  # Example: broken.stick.out.20 = broken.stick(20)
+  #             Pierre Legendre, April 2007
+{
+  result = matrix(0,p,2)
+  colnames(result) = c("j","E(j)")
+  for(j in 1:p) {
+    E = 0
+    for(x in j:p) E = E+(1/x)
+    result[j,1] = j
+    result[j,2] = E/p
+  }
+  return(result)
+}
+```
+
+```{r kable2, results='asis'}
+
+kable(broken.stick(15))
+```
+
+
+> 5.	Once you decide how many PCs you will interpret, report the followings:
+  
+  •	Percent variance explained by the PC axes
+
+
+  •	Eigenvectors of the PC axes
+
+
+  •	Scree plot and biplot
+  
+  
+
+> 6.	Interpret the PCA biplot.  You need to use both exploratory results (task 1 and 2) and PCA outputs (e.g., eigenvalues and eigenvectors) to aid your interpretations.  Specifically, you need to interpret the followings:
+
+  •	How effectively PCA reduces the original data dimensionality 
+
+
+  •	Major patterns of the sampling sites in the PCA space based on measured variables.  In other words, what each PC means in terms of measured variables.
+
+
+

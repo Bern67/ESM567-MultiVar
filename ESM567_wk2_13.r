@@ -40,6 +40,7 @@ plot(pca1, main="Scree plot") #scree plot. What does this plot tell you?
 ##STOP HERE! Wait for Wednesday's lecture for the following exercise ##
 #######################################################################
 ###step-by-step run PCA using spectral decomposition method based on covariance matrix
+
 air.s<-air[,c(3:5)] #make a subset with the first 5 rows (cities) and 4 columns (variables)
 air.s #look at the newly created dataset
 air.d<-round(var(scale(air.s,scale=F)),0)  #calculate variance-covariance matrix and save it to 'air.d'
@@ -47,7 +48,7 @@ air.d #look at the newly created variance-covariance matrix
 e.1<-eigen(air.d) #eigen-analysis
 names(e.1) #check how many R objects in "e" -->two: "values" and "vectors"
 e1.value<-round(e.1$values,0) #get all eigenvalues
-e1.value  #print out all all eigenvalues
+e1.value  #print out all eigenvalues
 e1.vector<-round(e.1$vectors,2) #get all eigenvectors
 e1.vector   #print out all all eigenvectors, Note: each eigenvector needs to be normalized (each number divides by the vector length)
 e1.value/sum(e1.value) #get proportion of variance explained by each axis

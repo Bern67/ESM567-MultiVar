@@ -1,5 +1,8 @@
 ###Week 2 PCA plots: More options
 ###import a data called 'usair1' with an additional categorical var
+
+air1 <- read.csv("usair1.csv")
+
 ##Run PCA in R
 library(MASS) #call the package of "MASS" to make 'princomp' function available
 pca1<-princomp(scale(air1[,-c(1,9)],scale=F)) #run PCA on covariance and save all outputs in 'pca1'

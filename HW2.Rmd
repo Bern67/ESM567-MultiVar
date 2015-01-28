@@ -3,26 +3,29 @@ title: "ESM567 HW#2"
 author: "Bernard Romey"
 date: "Friday, January 23, 2015"
 output:
-  pdf_document: default
   word_document:
     fig_caption: yes
+  pdf_document: default
 ---
+
+In order to evaluate the environmental data from the Floriday Everglades for principal components analysis we need to follow the next six steps:
 
 ```{r global_options, include=FALSE}
 library(knitr)
-opts_chunk$set(fig.width=5, fig.height=3.5, fig.path='Figs/',
+opts_chunk$set(fig.width=6, fig.height=6, fig.path='Figs/',
                echo=FALSE, warning=FALSE, message=FALSE)
 ```
 
 ```{r dta, echo=FALSE}
 dta <- read.csv("evenv.csv")
-dta <- na.omit(dta)
+env <- na.omit(dta)
+rm(dta)
 library(dplyr)
-dta <- select(dta,-Site)
-dta <- scale(dta)
+env <- select(env,-Site)
+detach()
 ```
 
-> 1.  Use ‘cor.matrix’ function to examine pair-wise relationships among all numerical variables.
+**1.  Use ‘cor.matrix’ function to examine pair-wise relationships among all numerical variables.**
 
 ```{r cor.matrix, echo=FALSE}
 cor.matrix<-function(x,data=NA,cor.method="pearson",add1to1=F,...){
@@ -77,31 +80,26 @@ options(warning=F)
 ```
 
 ```{r pair-wise, echo=FALSE, eval=FALSE}
-cor.matrix(dta[,c(2:15)])  #As a guide, only show 5 variables to check each variable's distribution and pair-wise relationships
+cor.matrix(env) 
 ```
 
+**2.	Calculate a variance and covariance matrix with a scaled dataset (standardization).**
 
-> 2.	Calculate a variance and covariance matrix with a scaled dataset (standardization).
-
-```{r kable, results='asis', eval=FALSE}
+```{r cov.mx, results='asis', eval=FALSE}
 #scaled data
-dta1 <-round(var(log(dta+1)),2) #variance/covariance matrix
-
-kable((dta1), digits=1)
+env1 <-round(var(scale(env)),2) #variance/covariance matrix
+kable((env1), digits=2) #Formats table for output
 ```
 
+**3.	Run PCA in R using “princomp” in the MASS package with the scaled dataset.**
 
-> 3.	Run PCA using “princomp” in the MASS package with the scaled dataset.
-
-```{r scale,echo=TRUE,results='asis'}
+```{r PC,echo=F, results='hide'}
 require(MASS)
-pca1<-princomp(scale(dta[,-c(3,9)],scale=F)) #run PCA on covariance and save all outputs in 'pca1'
-
-
+pca<-princomp(env,cor=TRUE) #run PCA on covariance and save all outputs in 'pca1'
+summary(pca)
 ```
 
-
-> 4.	Run “broken.stick” function to decide how many PCs you should interpret.
+**4.	Run “broken.stick” function to decide how many PCs you should interpret.**
 
 ```{r brkStick, echo=FALSE}
 broken.stick <- function(p)
@@ -121,30 +119,69 @@ broken.stick <- function(p)
 }
 ```
 
-```{r kable2, results='asis'}
-
+```{r Bstick, results='asis', results='hide'}
 kable(broken.stick(15))
 ```
 
+**5.	Once you decide how many PCs you will interpret, report the followings:**
 
-> 5.	Once you decide how many PCs you will interpret, report the followings:
+* Percent variance explained by the PC axes
+
+* Eigenvectors of the PC axes
+
+* Scree plot and biplot
+
+**6.  The final step is to interpret the PCA biplot.  You need to use both exploratory results (task 1 and 2) and PCA outputs (e.g., eigenvalues and eigenvectors) to aid your interpretations.  Specifically, you need to interpret the followings:**
+
+* How effectively PCA reduces the original data dimensionality
+
+* Major patterns of the sampling sites in the PCA space based on measured variables.  In other words, what each PC means in terms of measured variables.
+
+------------
   
-  •	Percent variance explained by the PC axes
+I used the broken stick criterion to evaluate the importance of the principal components.  Observed eighenvalues greater than the broken stick eigenvalues are considered meaningfull and are thus used for interpretation.  After comparsion, only component 1 and 2 were greater than the broken stick eigenvalues and were selected for interpretation.
+
+**Percent variance explained by the PC axes**
+
+Proportion of Variation (PV):  Proportion of Variance is observed in the eigenvalues in the cononical matrix and is calculated with the following formula:
+
+$PV=\frac{\lambda_i}{\lambda_i}$ where $i=1...p$ variables.  Equivalent to $R^2$ in regression.
+
+Componenet 1 represents 26.3% of the variability along the primary axis, while  component 2 represents 23.8% of the variation along the secondary axis.  
+
+**Eigenvectors of the PC axes**
+
+```{r load, tidy=TRUE}
+ld <-round(loadings(pca),2)
+format(ld)
+```
 
 
-  •	Eigenvectors of the PC axes
-
-
-  •	Scree plot and biplot
+**Scree plot and biplot**
   
   
-
-> 6.	Interpret the PCA biplot.  You need to use both exploratory results (task 1 and 2) and PCA outputs (e.g., eigenvalues and eigenvectors) to aid your interpretations.  Specifically, you need to interpret the followings:
-
-  •	How effectively PCA reduces the original data dimensionality 
-
-
-  •	Major patterns of the sampling sites in the PCA space based on measured variables.  In other words, what each PC means in terms of measured variables.
+```{r Scree, fig.cap="Scree plot showing the variance (eigenvalues) for each principal component."}
+plot(pca, main="Scree Plot") #Scree plot
+```
 
 
+```{r Biplot, fig.cap="Biplot of principal component 1 & 2 with"}
+biplot(pca, main = "Biplot", xlab = "Comp.1 (26.3%)", ylab = "Comp.2 (23.8%)")
+```
 
+
+6.	Interpret the PCA biplot.  You need to use both exploratory results (task 1 and 2) and PCA outputs (e.g., eigenvalues and eigenvectors) to aid your interpretations.  Specifically, you need to interpret the followings:
+
+**How effectively PCA reduces the original data dimensionality**
+  
+Effectively reduces fifteen variables down to two synthetic principal components. 
+
+**Major patterns of the sampling sites in the PCA space based on measured variables.  In other words, what each PC means in terms of measured variables.**
+
+*What is the differences between the two synthetic components*
+
+For interpretation, I used a principal component loading level greater than $\mid{.32}\mid$ for a comparative benchmark.
+
+For PC1, low values of Total phophorus concentration in sediments (TPSed) is associated with low values of Total phosphorus concentration in macrophytes (TPeleo), and low values of Total carbon concentration in sediments  (TCSed).  For PC2, high values of Unfiltered Total nitrogen in water column (UNFILT.TN) is associated with high values of Ortho-phosphorus concentration in water column (FILT.PO4) and Silica concentration in water column (SIO2), and low values of Total nitrogen concentration in sediments (TNSed).
+
+The variables seem to be organized into groups.  TCsed, TNeleo, and NTsed are positively correlated.  TPeleo, TPsed, and UNFILT.TP are positivley correlated.  The large group of AFDMsed, CHLAsed, FILT.TP, SIO2, FILT.PO4 are positively correlated, and UNFILT.TN adn FILT.TN are positivley correlated.

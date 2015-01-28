@@ -28,6 +28,6 @@ round((pca$scores),2) #Shows the rotated/transformed dataset: PC matrix
 #plaing with vegan package
 library(vegan)
 mod <-rda(env, scale = TRUE)
-biplot(mod,scaling = 3)
+biplot(mod, scaling = 3)
 biplot(mod, scaling = 3, type = c("text", "points"))
 summary(mod)

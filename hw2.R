@@ -3,17 +3,14 @@
 dta <- read.csv("evenv.csv")
 env <- na.omit(dta)
 rm(dta)
-library(dplyr)
-env <- select(env,-Site)
-detach()
+env <- env[,-1]
 
-boxplot(env)
-boxplot(scale(env))
+boxplot(env, main = "Not scaled")
+boxplot(scale(env), main="Scaled with Z-score")
 
 #source cor.matrix function
 cor.matrix(env)
 
-round(var(env),2) #actual variance and covariance (not good, one variable not same unit)
 round(var(scale(env)),2) #calculate variance and covariance matrix with the standardized data: Z-score from -1 to 1
 
 require(MASS) #loads the PCA package
@@ -26,9 +23,7 @@ broken.stick(15) #After comparing, keep comp 1 & 2
 par(mfrow=c(1,2))
 biplot(pca, expand = 1.05,main = "Biplot", xlab = "Comp.1 (26.3%)", ylab = "Comp.2 (23.8%)")
 loadings(pca) #Check eigenvector elements: How closely variables and components are related; Principal component loading (pg 50)
-pc <- round((pca$scores),2) #Shows the rotated/transformed dataset: PC matrix
-pc
-
+round((pca$scores),2) #Shows the rotated/transformed dataset: PC matrix
 
 #plaing with vegan package
 library(vegan)

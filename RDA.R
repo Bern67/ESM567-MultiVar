@@ -3,26 +3,27 @@
 ##### Import a data called"wemap_cal.csv" and save it as 'ca'
 ca <-read.csv("wemap_cal.csv")
 
-
 colnames(ca)
 ca.1<-na.omit(ca)  #remove all missing values from the dataset
 wq<-ca.1[,c(2,4:6,12:15,19,22,24,26:27)]      #split the data into a subset with all water quality variables
 ws<-ca.1[,-c(2,4:6,12:16,19,22,24,25,26:27)]    #split the data into a subset with all watershed variables
 
 #####know your data using several graphic methods
+boxplot(wq)
+boxplot(ws)
 
 #source "cor.matrix.r"
-cor.matrix(wq[,c(1:5)])      #only show 5 variables to check each variable's distribution and pair-wise relationships
+cor.matrix(wq[,c(1:5)]) #only show 5 variables to check each variable's distribution and pair-wise relationships
 cor.matrix(log(wq[,c(1:5)]+1))  #log-transformation: How does transformation change both distribution and pair-wise relationships?
 round(var(log(wq+1)),2) #variance/covariance matrix
-diag(round(var(log(wq+1)),2))   #show variance only
+diag(round(var(log(wq+1)),2)) #show variance only
 
 #####run PCA first
 pca.wq<-princomp(scale(log(wq+1))) #run PCA with log-transformed and standardized data
 biplot(pca.wq) #biplot
 summary(pca.wq) #eigenvalues
 round(loadings(pca.wq)[,c(1:2)],2)  #eigenvectors for PC1 and 2 only
-#source "brokenStick.r" 
+#source "brokenStick.r"
 broken.stick(13) #how many PCs should we keep?
 pca.wq$scores #PC.Matrix showing site scores for all PCs
 ###Perform an Indirect analysis: regress PC1 against 4 watershed variables

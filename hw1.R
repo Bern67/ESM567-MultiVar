@@ -9,7 +9,7 @@ var1
 #1
 dta <-read.csv("wemap.csv")
 library(dplyr)
-dta<-select(dta,-c(YEAR, ECO10, ECO3, HUC4, FOR_TOT, AG_TOT, URB_TOT))
+dta<-select(dta,-c(YEAR, ECO10, ECO3, HUC4))
 
 mean <- summarise_each(dta,funs(mean))
 mdn<-summarise_each(dta,funs(median))

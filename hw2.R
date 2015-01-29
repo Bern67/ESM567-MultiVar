@@ -25,9 +25,12 @@ biplot(pca, expand = 1.05,main = "Biplot", xlab = "Comp.1 (26.3%)", ylab = "Comp
 loadings(pca) #Check eigenvector elements: How closely variables and components are related; Principal component loading (pg 50)
 round((pca$scores),2) #Shows the rotated/transformed dataset: PC matrix
 
+<<<<<<< HEAD
 #plaing with vegan package
 library(vegan)
 mod <-rda(env, scale = TRUE)
 biplot(mod, scaling = 3)
 biplot(mod, scaling = 3, type = c("text", "points"))
 summary(mod)
+=======
+>>>>>>> f9215ee4a625f5cab36a8fadf6d5fe2e461e3551

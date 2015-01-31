@@ -63,6 +63,7 @@ round(loadings(pca),2) #Check eigenvectors: How much variability each variable c
 round(loadings(pca)[,c(1:2)],2) #Loading for PC1 & 2 only
 
 round((pca$scores),2) #PC matrix showing site scores for all PCs. 
+#Thisis the distribution of PC1 adn PC2.  Each variable for each component. 
 
 require(BiplotGUI)
 Biplots(env)

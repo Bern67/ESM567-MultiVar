@@ -136,9 +136,16 @@ kable(broken.stick(15))
 * Major patterns of the sampling sites in the PCA space based on measured variables.  In other words, what each PC means in terms of measured variables.
 
 ------------
-For this Principal Component Analysis (PCA) I used the R statistical programming languate.
+For this Principal Component Analysis (PCA) I used the R statistical programming language.
 
-I then used the broken stick criterion to evaluate the importance of the principal components.  Observed eighenvalues greater than the broken stick eigenvalues are considered meaningfull and are thus used for interpretation.  After comparsion, only component 1 and 2 were greater than the broken stick eigenvalues and were selected for interpretation.
+The first step in PCA is to create the variance/Covariance matrix and compare the variances along the primary axis.  The between varaible covariances should also be compared to see where the largest covariances exist.  Standardizing the covariance matrix is recomended if the units of measure between vaiables is not the same, and allows a better comparison between vairables by using the Person Correaltion coefficient:
+
+$PCC=$
+
+Once I decided to use the correlation matrix for analysis, I then used the "pcomp()" function in R to create the cononical matrix of eigenvalues.  The eigenvalues in the cononical matrix are the representation of how much total variance contribution occurs from all variables toward the new components.  
+
+
+I then used the broken stick criterion to evaluate the importance of the newly created principal components.  Observed eighenvalues greater than the broken stick eigenvalues are considered meaningfull and are thus used for interpretation.  After comparsion, only component 1 and 2 were greater than the broken stick eigenvalues and were selected for interpretation.
 
 **Percent variance explained by the PC axes**
 
@@ -146,7 +153,7 @@ Proportion of Variance (PV) is observed in the eigenvalues in the cononical matr
 
 $PV=\frac{\lambda_i}{\lambda_i}$ where $i=1...p$ variables.  Equivalent to $R^2$ in regression.
 
-Componenet 1 represents 26.3% of the variability along the primary axis,  while  component 2 represents 23.8% of the variation along the secondary axis (Figure 1).  Thus, both component one and two comprize 50.1% of the variability observed in the data.
+Componenet 1 represents 26.3% of the variability along the primary axis,  while  component 2 represents 23.8% of the variation along the secondary component axis (Figure 1).  Thus, both component one and two comprize 50.1% of the variability observed in the data.
 
 **Eigenvectors of the PC axes**
 
@@ -154,6 +161,8 @@ Componenet 1 represents 26.3% of the variability along the primary axis,  while 
 ld <-round(loadings(pca)[,c(1:2)],2) #Loading for PC1 & 2 only
 kable(ld)
 ```
+
+The eigenvector matrix is a relative representaiton of the correlations between variables.
 
 **Scree plot and biplot**
   

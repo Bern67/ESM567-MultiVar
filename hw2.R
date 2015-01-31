@@ -19,7 +19,7 @@ diag(round(var(env),2)) #show variance only from covariance/var matrix (along di
 require(MASS) #loads the PCA package
 pca <- princomp(env, cor=TRUE) #creates a PC matrix using the correlation matrix
 biplot(pca, expand = 1.05,main = "Biplot", xlab = "Comp.1 (26.3%)", ylab = "Comp.2 (23.8%)")
-#Scale for sites on top, scale for variables (vectors) along bottom
+#Scale for sites(PC matrix-pca$scores) on top, scale for variables (vectors-loadings) along bottom
 summary(pca) #proportion of variance is eigenvalues for each PC
 
 plot(pca, main="Scree Plot") #Scree plot

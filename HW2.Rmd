@@ -136,8 +136,9 @@ kable(broken.stick(15))
 * Major patterns of the sampling sites in the PCA space based on measured variables.  In other words, what each PC means in terms of measured variables.
 
 ------------
-  
-I used the broken stick criterion to evaluate the importance of the principal components.  Observed eighenvalues greater than the broken stick eigenvalues are considered meaningfull and are thus used for interpretation.  After comparsion, only component 1 and 2 were greater than the broken stick eigenvalues and were selected for interpretation.
+For this Principal Component Analysis (PCA) I used the R statistical programming languate.
+
+I then used the broken stick criterion to evaluate the importance of the principal components.  Observed eighenvalues greater than the broken stick eigenvalues are considered meaningfull and are thus used for interpretation.  After comparsion, only component 1 and 2 were greater than the broken stick eigenvalues and were selected for interpretation.
 
 **Percent variance explained by the PC axes**
 

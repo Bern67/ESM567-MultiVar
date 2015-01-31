@@ -20,9 +20,7 @@ opts_chunk$set(fig.width=6, fig.height=6, fig.path='Figs/',
 dta <- read.csv("evenv.csv")
 env <- na.omit(dta)
 rm(dta)
-library(dplyr)
-env <- select(env,-Site)
-detach()
+env <- env[,-1]
 ```
 
 **1.  Use ‘cor.matrix’ function to examine pair-wise relationships among all numerical variables.**
@@ -85,17 +83,17 @@ cor.matrix(env)
 
 **2.	Calculate a variance and covariance matrix with a scaled dataset (standardization).**
 
-```{r cov.mx, results='asis', eval=FALSE}
+```{r corr.mx, results='asis', eval=FALSE}
 #scaled data
-env1 <-round(var(scale(env)),2) #variance/covariance matrix
-kable((env1), digits=2) #Formats table for output
+round(var(scale(env)),2) # correlation matrix with log transformed data
+kable((cov), digits=2) #Formats table for output
 ```
 
 **3.	Run PCA in R using “princomp” in the MASS package with the scaled dataset.**
 
 ```{r PC,echo=F, results='hide'}
 require(MASS)
-pca<-princomp(env,cor=TRUE) #run PCA on covariance and save all outputs in 'pca1'
+pca1 <- princomp(env, cor=TRUE) #run PCA on correlatin matrix and save all outputs in 'pca1'
 summary(pca)
 ```
 
@@ -143,24 +141,22 @@ I used the broken stick criterion to evaluate the importance of the principal co
 
 **Percent variance explained by the PC axes**
 
-Proportion of Variation (PV):  Proportion of Variance is observed in the eigenvalues in the cononical matrix and is calculated with the following formula:
+Proportion of Variance (PV) is observed in the eigenvalues in the cononical matrix and is calculated with the following formula:
 
 $PV=\frac{\lambda_i}{\lambda_i}$ where $i=1...p$ variables.  Equivalent to $R^2$ in regression.
 
-Componenet 1 represents 26.3% of the variability along the primary axis, while  component 2 represents 23.8% of the variation along the secondary axis.  
+Componenet 1 represents 26.3% of the variability along the primary axis,  while  component 2 represents 23.8% of the variation along the secondary axis (Figure 1).  Thus, both component one and two comprize 50.1% of the variability observed in the data.
 
 **Eigenvectors of the PC axes**
 
-```{r load, tidy=TRUE}
-ld <-round(loadings(pca),2)
-format(ld)
+```{r load, tidy=TRUE, results='asis'}
+ld <-round(loadings(pca)[,c(1:2)],2) #Loading for PC1 & 2 only
+kable(ld)
 ```
-
 
 **Scree plot and biplot**
   
-  
-```{r Scree, fig.cap="Scree plot showing the variance (eigenvalues) for each principal component."}
+```{r Scree, fig.cap="Scree plot showing the variance (eigenvalues) for first 10 principal component."}
 plot(pca, main="Scree Plot") #Scree plot
 ```
 
@@ -168,7 +164,6 @@ plot(pca, main="Scree Plot") #Scree plot
 ```{r Biplot, fig.cap="Biplot of principal component 1 & 2 with"}
 biplot(pca, main = "Biplot", xlab = "Comp.1 (26.3%)", ylab = "Comp.2 (23.8%)")
 ```
-
 
 6.	Interpret the PCA biplot.  You need to use both exploratory results (task 1 and 2) and PCA outputs (e.g., eigenvalues and eigenvectors) to aid your interpretations.  Specifically, you need to interpret the followings:
 
@@ -185,3 +180,7 @@ For interpretation, I used a principal component loading level greater than $\mi
 For PC1, low values of Total phophorus concentration in sediments (TPSed) is associated with low values of Total phosphorus concentration in macrophytes (TPeleo), and low values of Total carbon concentration in sediments  (TCSed).  For PC2, high values of Unfiltered Total nitrogen in water column (UNFILT.TN) is associated with high values of Ortho-phosphorus concentration in water column (FILT.PO4) and Silica concentration in water column (SIO2), and low values of Total nitrogen concentration in sediments (TNSed).
 
 The variables seem to be organized into groups.  TCsed, TNeleo, and NTsed are positively correlated.  TPeleo, TPsed, and UNFILT.TP are positivley correlated.  The large group of AFDMsed, CHLAsed, FILT.TP, SIO2, FILT.PO4 are positively correlated, and UNFILT.TN adn FILT.TN are positivley correlated.
+
+Since no single variable has a loading more than 0.45 for both components, the varibles do a poor job representing the new components.
+
+Since the Total Phospherous (TP) are the dominant loading on Principal component one, we will call PC1 the TP gradient.  In addition, Total Nitrogen (TN) is dominant on PC2 so we will call it the TN cradient.

@@ -3,12 +3,12 @@ title: "ESM567 HW#2"
 author: "Bernard Romey"
 date: "Friday, January 23, 2015"
 output:
+  pdf_document:
+    toc: yes
+    toc_depth: 3
   word_document:
     fig_caption: yes
-  pdf_document: default
 ---
-
-In order to evaluate the environmental data from the Floriday Everglades for principal components analysis we need to follow the next six steps:
 
 ```{r global_options, include=FALSE}
 library(knitr)
@@ -23,7 +23,40 @@ rm(dta)
 env <- env[,-1]
 ```
 
-**1.  Use ‘cor.matrix’ function to examine pair-wise relationships among all numerical variables.**
+------------
+
+## Introduction
+
+We were asked to evaluate multiple water quality variables collected from 32 different sites in a Florida Everglades freshwater mash.  The fifteen water quality variables for the 32 sampled sites are:
+
+* Tpeleo: Total phosphorus concentration in macrophytes (µg/mg dry weight)
+*	Tneleo: Total nitrogen concentration in macrophytes (µg/mg dry weight)
+*	Tpsed: Total phophorus concentration in sediments (mg/g dry weight)
+*	Tcsed: Total carbon concentration in sediments (mg/g dry weight)
+*	Tnsed: Total nitrogen concentration in sediments (mg/g dry weight)
+*	AFDMsed: Ash-free dry mass (mg/g dry weight)
+*	CHLAsed: Chlorophyll a concentrations (µg/g dry weight)
+*	NH4-N: NH4 concentration in water column (mg/L)
+*	NO3-N: NO3 concentration in water column (mg/L)
+*	FILT-TN: Total nitrogen in water column (filtered sample) (mg/L)
+*	UNFILT-TN: Total nitrogen in water column (unfiltered sample) (mg/L)
+*	FILT-PO4: Ortho-phosphorus concentration in water column (filtered sample) (mg/L)
+*	FILT-TP: Total phosphorus concentration in water column (filtered sample) (mg/L)
+*	SIO2: Silica concentration in water column (mg/L)
+*	UNFILT-TP: Total phosphorus concentration in water column (Unfiltered sample) (mg/L)
+
+
+## Methods (*Topic 1 to 4*)
+
+One of the methods used to evaluate multiple variables that are correlated is with Principal Component Analysis (PCA).  The R statistical programming language has functions specificaly designed to analyze PCA data. Thus, that is what we used for this analysis.
+
+### 1.  Use ‘cor.matrix’ function to examine pair-wise relationships among all numerical variables.
+
+We first checked normality for all measured water quality variables by comparing sample distributions with normal distributions using a qqnorm lattice plot.   
+
+The first step in analyzing the data was to create a varaince (primary axis)/covariance matrix that has been standardized (Correlation Matrix) to  Z-scores from the original observations using matrix algebra.  The reason for converting the original data to Z-scores is because not all units of measure for the different variables were homogenous (of the same scale).  
+
+The "*cor.matrix()*" function does this conversion graphicly on all variables so that we were able to compare Pearson Correlation Coeffecients (PCC's) between variables on a lattice plot.  The lattice plot also shows frequency distributions for each variable, and scatter plots for each PCC.  The frequency histograms are a good way to evaluate the spread, mode, and skew of the distributions for normality check.
 
 ```{r cor.matrix, echo=FALSE}
 cor.matrix<-function(x,data=NA,cor.method="pearson",add1to1=F,...){
@@ -77,11 +110,16 @@ options(warning=F)
 }
 ```
 
-```{r pair-wise, echo=FALSE, eval=FALSE}
-cor.matrix(env) 
+```{r PCC, fig.cap="Person Correlation Coefficient matrix of all 15 water qualtiy variables"}
+pcc <- cor.matrix(env) 
 ```
 
-**2.	Calculate a variance and covariance matrix with a scaled dataset (standardization).**
+
+### 2.  Calculate a variance and covariance matrix with a scaled dataset (standardization).
+
+In order to perform further PCA analysis, we would need to calculate a correlatin matrix by standardizing a covariance matrix using the "*var(scale(data))*" function.  This function first scales the data to Z-scores, then creates a correlatin matrix.
+
+Simmilar to the lattice plot mentioned above, the correlatin matrix compares among variable differences with the PCC that range from -1 to 1 (Table 1).  
 
 ```{r corr.mx, results='asis', eval=FALSE}
 #scaled data
@@ -89,15 +127,22 @@ round(var(scale(env)),2) # correlation matrix with log transformed data
 kable((cov), digits=2) #Formats table for output
 ```
 
-**3.	Run PCA in R using “princomp” in the MASS package with the scaled dataset.**
+### 3.	Run PCA in R using “princomp” in the MASS package with the scaled dataset.
+
+To evaluate the total variance contribution to the newly created principal compnents (PC's) from each of the variables, we calculated the cononical(eigenvalue) and eigenvector matrices using the "*printcomp*" function.  The total variance contribution from each component to the newly created PC's is the sum of all eigenvalues along the principal axis of the cononical matrix. The largest eigenvalue corrsponds to PC one, the second largest to PC two, and so forth.
 
 ```{r PC,echo=F, results='hide'}
 require(MASS)
-pca1 <- princomp(env, cor=TRUE) #run PCA on correlatin matrix and save all outputs in 'pca1'
+pca <- princomp(env, cor=TRUE) #run PCA on correlatin matrix and save all outputs in 'pca1'
 summary(pca)
 ```
 
-**4.	Run “broken.stick” function to decide how many PCs you should interpret.**
+### 4.	Run “broken.stick” function to decide how many PCs you should interpret.
+
+
+
+
+
 
 ```{r brkStick, echo=FALSE}
 broken.stick <- function(p)
@@ -121,31 +166,13 @@ broken.stick <- function(p)
 kable(broken.stick(15))
 ```
 
-**5.	Once you decide how many PCs you will interpret, report the followings:**
-
-* Percent variance explained by the PC axes
-
-* Eigenvectors of the PC axes
-
-* Scree plot and biplot
-
-**6.  The final step is to interpret the PCA biplot.  You need to use both exploratory results (task 1 and 2) and PCA outputs (e.g., eigenvalues and eigenvectors) to aid your interpretations.  Specifically, you need to interpret the followings:**
-
-* How effectively PCA reduces the original data dimensionality
-
-* Major patterns of the sampling sites in the PCA space based on measured variables.  In other words, what each PC means in terms of measured variables.
-
-------------
-For this Principal Component Analysis (PCA) I used the R statistical programming language.
-
-The first step in PCA is to create the variance/Covariance matrix and compare the variances along the primary axis.  The between varaible covariances should also be compared to see where the largest covariances exist.  Standardizing the covariance matrix is recomended if the units of measure between vaiables is not the same, and allows a better comparison between vairables by using the Person Correaltion coefficient:
-
-$PCC=$
-
-Once I decided to use the correlation matrix for analysis, I then used the "pcomp()" function in R to create the cononical matrix of eigenvalues.  The eigenvalues in the cononical matrix are the representation of how much total variance contribution occurs from all variables toward the new components.  
 
 
-I then used the broken stick criterion to evaluate the importance of the newly created principal components.  Observed eighenvalues greater than the broken stick eigenvalues are considered meaningfull and are thus used for interpretation.  After comparsion, only component 1 and 2 were greater than the broken stick eigenvalues and were selected for interpretation.
+
+## Results (*Topic 5*)
+
+
+### 5.  Once you decide how many PCs you will interpret, report the followings:
 
 **Percent variance explained by the PC axes**
 
@@ -155,6 +182,8 @@ $PV=\frac{\lambda_i}{\lambda_i}$ where $i=1...p$ variables.  Equivalent to $R^2$
 
 Componenet 1 represents 26.3% of the variability along the primary axis,  while  component 2 represents 23.8% of the variation along the secondary component axis (Figure 1).  Thus, both component one and two comprize 50.1% of the variability observed in the data.
 
+
+
 **Eigenvectors of the PC axes**
 
 ```{r load, tidy=TRUE, results='asis'}
@@ -163,6 +192,7 @@ kable(ld)
 ```
 
 The eigenvector matrix is a relative representaiton of the correlations between variables.
+
 
 **Scree plot and biplot**
   
@@ -175,22 +205,39 @@ plot(pca, main="Scree Plot") #Scree plot
 biplot(pca, main = "Biplot", xlab = "Comp.1 (26.3%)", ylab = "Comp.2 (23.8%)")
 ```
 
-6.	Interpret the PCA biplot.  You need to use both exploratory results (task 1 and 2) and PCA outputs (e.g., eigenvalues and eigenvectors) to aid your interpretations.  Specifically, you need to interpret the followings:
 
-**How effectively PCA reduces the original data dimensionality**
-  
-Effectively reduces fifteen variables down to two synthetic principal components. 
+## Discussion (*Topic 6*)
 
-**Major patterns of the sampling sites in the PCA space based on measured variables.  In other words, what each PC means in terms of measured variables.**
+**6.  The final step is to interpret the PCA biplot.  You need to use both exploratory results (task 1 and 2) and PCA outputs (e.g., eigenvalues and eigenvectors) to aid your interpretations.  Specifically, you need to interpret the followings:**
 
-*What is the differences between the two synthetic components*
+*Assumptions
 
-For interpretation, I used a principal component loading level greater than $\mid{.32}\mid$ for a comparative benchmark.
+All variables were found acceptable deviation from normality for all variables for the majority of the observations within each variable (Figure __).  None of the plots showed the typical s-shape associated with a distribution that violates normality.
+
+
+* How effectively PCA reduces the original data dimensionality
+
+   
+
+
+* Major patterns of the sampling sites in the PCA space based on measured variables.  In other words, what each PC means in terms of measured variables.
+
+For interpretation, I used a principal component loading level greater than $\mid{.25}\mid$ for a comparative benchmark.
 
 For PC1, low values of Total phophorus concentration in sediments (TPSed) is associated with low values of Total phosphorus concentration in macrophytes (TPeleo), and low values of Total carbon concentration in sediments  (TCSed).  For PC2, high values of Unfiltered Total nitrogen in water column (UNFILT.TN) is associated with high values of Ortho-phosphorus concentration in water column (FILT.PO4) and Silica concentration in water column (SIO2), and low values of Total nitrogen concentration in sediments (TNSed).
 
-The variables seem to be organized into groups.  TCsed, TNeleo, and NTsed are positively correlated.  TPeleo, TPsed, and UNFILT.TP are positivley correlated.  The large group of AFDMsed, CHLAsed, FILT.TP, SIO2, FILT.PO4 are positively correlated, and UNFILT.TN adn FILT.TN are positivley correlated.
+The variables seem to be organized into groups.  TCsed, TNeleo, and NTsed are positively correlated.  TPeleo, TPsed, and UNFILT.TP are also positivley correlated.  The large group of AFDMsed, CHLAsed, FILT.TP, SIO2, FILT.PO4 are positively correlated, and UNFILT.TN and FILT.TN are positivley correlated.
 
-Since no single variable has a loading more than 0.45 for both components, the varibles do a poor job representing the new components.
+Since no single variable has a loading more than 0.45 for both components, the varibles do a poor job representing the new components.  Although, since the Total Phospherous (TP) are the dominant loading on principal component one (Figure __), we will call PC1 the TP gradient.  In addition, Total Nitrogen (TN) is dominant on principal component two so we will call PC2 the TN gradient.
 
-Since the Total Phospherous (TP) are the dominant loading on Principal component one, we will call PC1 the TP gradient.  In addition, Total Nitrogen (TN) is dominant on PC2 so we will call it the TN cradient.
+
+-----------
+
+
+Because the variables in the raw data use different measurement scales, we standardised the data with Z-scores and used the correlation matrix for analysis. We then used the "pcomp()" function in R to create the cononical matrix of eigenvalues.  The eigenvalues in the cononical matrix are the representation of how much total variance contribution occurs from all variables toward the new components.  
+
+We then used the broken stick criterion to evaluate the importance of the newly created principal components.  Observed eighenvalues greater than the broken stick eigenvalues are considered meaningfull and are thus used for interpretation.  After comparsion, only component 1 and 2 were greater than the broken stick eigenvalues and were selected for interpretation.
+
+
+
+

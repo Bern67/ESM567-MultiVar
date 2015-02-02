@@ -1,11 +1,7 @@
 ###Week 2 Principal Component Analysis
 ###Before you run PCA, know your data graphically and numerically. Use the R scripts from Week 1 to summarize each variable numerically (e.g., mean, variance) and graphically (e.g., histogram, boxplot) and then check the relationships among variables (e.g., co-variance, correlation, cor.matrix)
 
-<<<<<<< HEAD
 air<-read.csv("usair1.csv", header=T)  
-=======
-air<-read.csv("usair1.csv", header=T) 
->>>>>>> ae9f93bebea013de69680673ec999c55ef310c96
 
 air.s<-air[,c(3:5)] #make a subset only 3 columns (variables)
 air.s #look at the newly created dataset

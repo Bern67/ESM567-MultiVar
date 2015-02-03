@@ -25,7 +25,7 @@ pca1<-princomp(scale(air.s,scale=F)) #run PCA on covariance and save all outputs
 summary(pca1) #check all eigenvalues to determine components to use
 loadings(pca1) # check all eigenvectors
 names(pca1) #check what detailed PCA outputs are available
-pca1$scores  #print pc.matrix.  What is pc.matrix?
+pca1$scores  #print pc.matrix.  What is pc.matrix? The pc.matrix is the matrix created by multiplying the vector matrix with the raw data
 plot(pca1$scores[,1], pca1$scores[,2],xlab="PC 1", ylab="PC 2", type='n') # plot the first two PCs.  Can you interpret the plot?
 text(pca1$scores[,1], pca1$scores[,2],labels=air$City, lwd=2)
 biplot(pca1) #show both sites and variables. Can you interpret the plot?

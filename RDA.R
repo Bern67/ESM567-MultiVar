@@ -15,6 +15,7 @@ boxplot(ws)
 #source "cor.matrix.r"
 cor.matrix(wq[,c(1:5)]) #only show 5 variables to check each variable's distribution and pair-wise relationships
 cor.matrix(log(wq[,c(1:5)]+1))  #log-transformation: How does transformation change both distribution and pair-wise relationships?
+
 round(var(log(wq+1)),2) #variance/covariance matrix
 diag(round(var(log(wq+1)),2)) #show variance only
 

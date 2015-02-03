@@ -81,7 +81,7 @@ e.1<-eigen(ev) #eigen-analysis
 e1.value<-round(e.1$values,0) #get all eigenvalues
 e1.value  #print out all eigenvalues
 e1.vector<-round(e.1$vectors,2) #get all eigenvectors
-e1.vector   #print out all all eigenvectors, Note: each eigenvector needs to be normalized (each number divides by the vector length)
+e1.vector   #print out all eigenvectors, Note: each eigenvector needs to be normalized (each number divides by the vector length)
 e1.value/sum(e1.value) #get proportion of variance explained by each axis
 sum(e1.value) # sum all eigenvalues
 sum(diag(ev))  #sum all variances

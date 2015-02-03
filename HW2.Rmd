@@ -82,7 +82,7 @@ The broken stick model makes the assumption that if the total variance is random
 
 After completing an initial check of the data, we noticed that there was missing observations in a few of the sites sampled.  Principal component analysis works best when all variables have the same number of observations.  We therefore removed the associated observations for all sites with missing values (site 2 and 29) so that we could continue with the PC analysis.  
 
-Normality plots for each variable showed that the majority of variables were reasonably normal (Figure 1).  Although, normality was suspect for a few of the variables (Example: Chlorophyll a  & Unfiltered total phosphorus in water column) transformations on all the variables in the data were performed to improve the multivariate distribution in case of non-normality.  The log transformation was used on each variable, and did not normalize the suspect variables.  Even though slight improvements to the variables were noticed, the results of the PCA did not change in a substantial way to warrant using the log transformed data.  Thus, the untransformed original data was used in the PCA analysis.
+Normality plots for each variable showed that the majority of variables were reasonably normal (Figure 1).  Although, normality was suspect for a few of the variables (Example: Chlorophyll a  & Unfiltered total phosphorus in water column). Transformations on all the variables in the data were performed to improve the multivariate distribution in case of non-normality.  The log transformation was used on each variable, and did not normalize the majority of the suspect variables.  Even though slight improvements to the variables were noticed, the results of the PCA did not change in a substantial way to warrant using the log transformed data.  Thus, the untransformed original data was used in the PCA analysis.
 
 ### 5.  Once you decide how many PCs you will interpret, report the followings:
 
@@ -92,9 +92,9 @@ Proportion of Variances (PV) are the eigenvalues in the canonical matrix and are
 
 $PV=\frac{\lambda_i}{\lambda_i}$ where $i=1...p$ variables; equivalent to $R^2$ in regression.
 
-The eigenvalues for the broken stick model indicated that component one and two had higher eigenvalues than what would be observed randomly, so they were retained for analysis (Figure 2).
+Eigenvalues from the broken stick model for component one, two, and three were 0.221, 0.155, and 0.121, respectively.  The eigenvalues from the canonical matrix for the same components were 0.263, 0.238, and 0.119, respectively.  The eigenvalues for the broken stick model indicated that component one and two had higher eigenvalues than what would be observed randomly, so they were retained for analysis (Figure 3).
 
-Component 1 represents 26.3% (eigenvalue 1) of the variability along the primary axis,  while  component 2 represents 23.8% (eigenvalues 2) of the variation along the secondary component axis.  Thus, both component one and two comprise 50.1% of the variability observed in the data (Figure 3).
+Component one represents 26.3% (eigenvalue 1) of the variability along the primary axis,  while  component two represents 23.8% (eigenvalues 2) of the variation along the secondary component axis.  Thus, both component one and two comprise 50.1% of the variability observed in the data.
 
 ```{r brkStick, echo=FALSE}
 broken.stick <- function(p)
@@ -120,13 +120,13 @@ kable(broken.stick(15))
 
 > *Eigenvectors of the PC axes* - loadings
 
-The eigenvector matrix is a relative representation of the correlations between variables and components. The loadings for each variable on component one and two are shown in table 1.  Total Phosphorous in the sediment has the most absolute relative contribution of variance to component one at 44%, total phosphorous concentration in macrophytes is 37%, and total carbon in sediment was 33%.  The concentration of NO3 in the water had the least absolute variance contribution to component one at 8%. Unfiltered total nitrogen contributed the most variance to component two with absolute relative variance of 45%.  Unfiltered total nitrogen was followed by filtered PO4 at 38%, silica concentrations in the water column at 37%, and total nitrogen in the sediment at 37%.  Unfiltered total phosphorous was the least relative contributor to total variance on component two at 4%.
+The eigenvector matrix is a relative representation of the correlations between variables and components. The loadings for each variable on component one and two are shown in table 2.  Total Phosphorous in the sediment has the most absolute relative contribution of variance to component one at 44%, total phosphorous concentration in macrophytes is 37%, and total carbon in sediment was 33%.  The concentration of NO3 in the water had the least absolute variance contribution to component one at 8%. Unfiltered total nitrogen contributed the most variance to component two with absolute relative variance of 45%.  Unfiltered total nitrogen was followed by filtered PO4 at 38%, silica concentrations in the water column at 37%, and total nitrogen in the sediment at 37%.  Unfiltered total phosphorous was the least relative contributor to total variance on component two at 4%.
 
 > *Scree plot and biplot*
 
-A scree plot is a good way to present the eigenvalues created in the eigen analysis.  When compared to to the results from the broken stick test, it shows were the cutoffs are located. The scree plot shows that approximately 50% of the variability is represented in components one and 2 sugesting that two components may be sufficient to represent the data, while the majority of remaining variance is spread out in component 3 through 10 (Figure 2). 
+A scree plot is a good way to present the eigenvalues created in the eigen analysis.  When compared to to the results from the broken stick test, it shows were the cutoffs are located (Figure 2). The scree plot shows that approximately 50% of the variability is represented in components one and two sugesting that two components may be sufficient to represent the data, while the majority of remaining variance is spread out in component three through ten. 
 
-Biplots are a good way to graphicly present the results of the principal component analysis.  The biplot includes scores associated with the original data, and variable vectors (Figure 4).
+Biplots are a good way to graphicly present the results of the principal component analysis.  The biplot includes scores associated with the original data, and variable vectors (Figure 4).  The biplot shows that the majority of variance is associated with component one in the negative direction of the plot.  Although, there is almost just as much variance in component two in the positive direction indicated by the fan shape of the eigenvectors for each variable.
 
 ## DISCUSSION (*Topic 6*)
 
@@ -134,23 +134,21 @@ Biplots are a good way to graphicly present the results of the principal compone
 
 > **Assumptions**
 
-All variables were found to have acceptable deviation from normality for the majority of the observations within each variable (Figure 1).  None of the plots showed the typical s-shape associated with a distribution that violates normality.
+All variables were found to have acceptable deviation from normality for the majority of the observations within each variable (Figure 1). None of the plots showed the typical s-shape associated with a distribution that drastically deviates from normality.  Even with a few outliers and slight skews, the raw data was standardized and used for analysis. 
 
 > **How effectively PCA reduces the original data dimensionality**
 
 Since the correlation matrix was used in the eigenanalysis, the eigenvectors are directly proportional to the loadings on each component. When the absolute value of the loading is low (near zero), the variable and the component have very little in common.  When the absolute value of the loading is high (near one) then the component is carrying nearly the same information as the variable [@mcgarigal00].
 
-Since no single variable has an absolute value loading more than 0.45 for both components, the variables do a poor job representing the new components (Table 1).  Total phosphorous in the sediment had the largest loading of -0.44 related to component one, or component one carries 44% of the same information (variance) as total phosphorous in sediment.  For component two, unfiltered total nitrogen had the largest loading at 0.45.  
+Total phosphorous in the sediment had the largest loading of -0.44 related to component one, or component one carries 44% of the same information (variance) as total phosphorous in sediment.  For component two, unfiltered total nitrogen had the largest loading at 0.45.  No single variable has an absolute value loading more than 0.45 for both components indicating that the variables do a poor job representing the new components (Table 1).
 
 For principal component one, low values of total phophorus concentration in sediments (TPSed) is associated with low values of Total phosphorus concentration in macrophytes (TPeleo), and low values of Total carbon concentration in sediments  (TCSed).  For PC2, high values of unfiltered total nitrogen in water column (UNFILT.TN) is associated with high values of ortho-phosphorus concentration in water column (FILT.PO4) and silica concentration in water column (SIO2), and low values of total nitrogen concentration in sediments (TNSed).
 
-In order to determine which principal component loading to consider in the interpretation of PC1 and PC2, I used a rule similar to that discussed by [@tabachnick89] where they suggest loadings greater than the absolute value of 0.32 are considered significant, loadings greater than 0.45 are considered more important, while loadings greater than 0.55 are considered good.
-
-For interpretation, I used a principal component loading level greater than $\mid{.29}\mid$ for a comparative benchmark (table 2). Four variables from each component were greater than 0.29 and were selected for interpreting PC1 and PC2.  They included total phosphorous in sediment and macrophytes, unfiltered total phosphorous, and total carbon in sediment for PC1.  For PC2, they included total nitrogen concentration in sediments, unfiltered total nitrogen in water column, ortho-phosphorus concentration in water column, and  silica concentration in water column.
+In order to determine which principal component loading to consider in the interpretation of PC1 and PC2, I used a rule similar to that discussed by  Tabachnick and Fidell where they suggest that loadings greater than the absolute value of 0.32 are considered significant, loadings greater than 0.45 are considered more important, while loadings greater than 0.55 are considered good [@tabachnick89]. For interpretation, I used a principal component loading level greater than $\mid{0.29}\mid$ for a comparative benchmark (table 2). Four variables from each component were greater than 0.29 and were selected for interpreting PC1 and PC2.  They included total phosphorous in sediment and macrophytes, unfiltered total phosphorous, and total carbon in sediment for PC1.  For PC2, they included total nitrogen concentration in sediments, unfiltered total nitrogen in water column, ortho-phosphorus concentration in water column, and  silica concentration in water column.  Most of the loadings were barely above the 0.29 benchmark level of varaince indicating that they are marginal. 
 
 Since the total phosphorous (TP) are the dominant loading on principal component one, PC1 is the TP gradient.  In addition, total nitrogen (TN) is dominant on principal component two, so PC2 is the TN gradient. These principal components are the weighted linear combinations of the original variables that define (most important loadings) PC1 and PC2.
 
-Even though these sampling scores are concentrated along the two principal components, the variables are not highly coordinated in their responses with each other leading to both principal components makeing up just 50.1% of the variability in the data (Eigenvalue one being a variance of 0.263 and eigenvalue two being a varaince of 0.238).
+Even though the sampling scores are concentrated along the two principal components, the variables are not highly coordinated in their responses with each other leading to both principal components makeing up just 50.1% of the variability in the data (Eigenvalue one and two having a variance of 0.263 and 0.238, respectivley). 
 
 It is important to also compare the correlations in the correlation matrix created in number three of the methods section (Table 1).  Very few of the correlations between variables in the correlation matrix are high(r > 0.5), indicating there is not that much redundancy, and making it difficult to reduce the dimensinality of the data set.  
 
@@ -161,7 +159,6 @@ Each sample site in the data has a score (location) on each principal component 
 For example, scores 6 through 13 (Figure 4) are all associated with the negative side of the total nitrogen gradient that make up part of principal component 2.  Thus, projecting a site onto a variable vector in that group of vectors at right angle approximates the position of the site along the variable.  
 
 The scatter plot of scores is also useful in evaluating the linearity assumption, since nonlinearities will show up as an arched pattern in the distribution of scores.  Since this data does not show a defined pattern with a curvilinear shape than the linear assumption is most likely not violated.
-
 
 -----------
 
@@ -267,7 +264,7 @@ biplot(pca, main = "Biplot", xlab = "Comp.1 (26.3%)", ylab = "Comp.2 (23.8%)")
 
 ```{r corr.mx, results='asis'}
 #scaled data
-cov <- round(var(scale(env)),2) # correlation matrix with log transformed data
+cov <- round(var(scale(env)),2) # correlation matrix 
 kable((cov), digits=2) #Formats table for output
 ```
 
@@ -280,6 +277,15 @@ kable(ld)
 
 Table 2.  Component loadings for PC1 & 2.
 
-________
+```{r shap, results='asis'}
+env.lg <-log(env+1)
+lshap <- lapply(env.lg, shapiro.test) #shapiro test on log transformed data
+lres <- sapply(lshap, `[`, c("statistic","p.value"))
+kable(lres)
+```
+
+
+
+_______
 
 #  REFERENCES

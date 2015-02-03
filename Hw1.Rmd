@@ -94,7 +94,6 @@ Turbidity and total suspended solids were observed in each ecoregion.  For compa
 
 **Table 1.  Summary statistics (mean, median, variance, standard deviaton, maximum, minimum) for numerical water quality variables (CA: Ca++ concentration (mg/L), COND: conductivity (µS/cm), Sodium: Na+ concentration (mg/L), ANC: Acid neutralizing capacity (mg CaCO3/L) ,  CL: Cl- concentration (mg/L), DOC: dissolved organic carbon (mg/L), NH4: NH4+ concentration (mg/L), NO3: NO3- concentration (mg/L), NTL: Total nitrogen concentration (mg/L),  SIO2: dissolved silica concentration (mg/L), TSS: Total suspended solids (mg/L), TURB: Turbidity (NTU), PH) ranked by variance.**
 
-
 ```{r kable, results='asis'}
 
 dta<-select(dta,-c(YEAR, ECO10, ECO3, HUC4, FOR_TOT, AG_TOT, URB_TOT))
@@ -123,7 +122,6 @@ dta.T<- subset(dta.T, select=c(Factor,1:6))
 kable((dta.T), digits=1)
 ```
 
-
 **Table 2.  Variable means for COND: conductivity (µS/cm), pH, NTL: Total nitrogen concentration (mg/L), TURB: Turbidity (NTU), AG_TOT: % of agriculture in watershed in watershed by ecoregions (ECO3).**
 
 ```{r kable2, results ='asis'}
@@ -135,8 +133,6 @@ eco3<-dta%>%
 knitr::kable(head(eco3), format = 'pandoc', digits=1, padding = 2, caption = 'Mean conductivity, pH, total nitrogen concentration, turbidity, and % of agrigulture in watershed')
 ```
 
-
-
 ```{r kable3, results='asis'}
 by_ECO3<- dta %>%
   group_by(ECO3)%>%
@@ -145,7 +141,6 @@ by_ECO3<- dta %>%
 knitr::kable(head(by_ECO3), format = 'pandoc', digits=1, padding = 2, caption = 'Number of % of forestland in watershed sites within each acoregion (ECO3) that have more than 80% forest cover.')
 
 ```
-
 
 ```{r kable4, results='asis'}
 require(dplyr)
@@ -157,16 +152,12 @@ dif <- dta %>%
 knitr::kable(head(dif), format = 'pandoc', digits=1, padding = 2, caption = 'Average COND: conductivity (µS/cm), and NTL: Total nitrogen concentration (mg/L) for each acoregion (ECO3) that have more than 80% forest cover.')
 ```
 
-
-
 ```{r p, fig.cap="Box plot of conductivity for each ecoregion (ECO3)"}
 dta <-read.csv("wemap.csv")
 require(ggplot2)
 p <- ggplot(dta, aes(factor(ECO3), COND))
 p + geom_boxplot()+geom_point()+ labs(list(title = "Conductivity for aech ecoregion", x = "Ecoregion (ECO3)", y = "Conductivity (uS/cm)"))
 ```
-
-
 
 ```{r p2, eval=FALSE, fig.cap="Plot with mean and 95% confidence intervals of conductivity for each ecoregion (ECO3)"}
 require(ggplot2)
@@ -185,13 +176,10 @@ p3+geom_histogram(aes(fill=ECO3))+
   labs(list(title = "Conductivity by ecoregion", x = "Conductivity (uS/cm)", y = "Frequency"))
 ```
 
-
 ```{r p4,fig.cap="Scatter plots of log transformed total suspended solids vs turbidity for each ecoregion"}
 require(ggplot2)
 p4<-ggplot(dta,aes(log(TSS+.25), log(TURB)))
 p4+geom_point(aes(shape=ECO3,color=ECO3))+geom_smooth(aes(group = ECO3), method="lm")+ labs(list(title = "Total suspended solids vs turbidity", x = "Ln Turbidity(NTU's)", y = "Ln Total suspended solids (mg/L)"))
 
 ```
-
-
 

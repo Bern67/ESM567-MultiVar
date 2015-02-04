@@ -1,0 +1,42 @@
+---
+title: 'Hw# '
+author: "Bernard Romey"
+date: 'Due: Monday, February 09, 2015'
+output:
+  word_document:
+    fig_caption: yes
+bibliography: hw.bib
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+opts_chunk$set(fig.width=6, fig.height=4, fig.path='Figs/',
+               echo=FALSE, warning=FALSE, message=FALSE)
+```
+
+```{r dta, echo=FALSE}
+dta <- read.csv("file.csv")
+env <- na.omit(dta) #remove missing data
+rm(dta)
+env <- env[,-1] #remove site column
+```
+
+## Introduction
+
+
+## Methods
+
+
+## Results
+
+
+## Discussion
+
+
+____
+
+## Figures and Tables
+
+
+____
+# REFERENCES

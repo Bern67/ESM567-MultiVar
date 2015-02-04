@@ -1,0 +1,53 @@
+---
+title: "Hw#3"
+author: "Bernard Romey"
+date: 'Due: Monday, February 09, 2015'
+output:
+  word_document:
+    fig_caption: yes
+bibliography: hw.bib
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+opts_chunk$set(fig.width=6, fig.height=4, fig.path='Figs/',
+               echo=FALSE, warning=FALSE, message=FALSE)
+```
+
+```{r dta, echo=FALSE}
+dta <- read.csv("wemap_pnw_rda_HW.csv")
+ws <- na.omit(dta) #remove missing data
+rm(dta)
+```
+
+## Introduction
+
+Redundancy analysis is one of the canonical analyses, which allows assessing the relationships between two matrices.  In this homework, we analyze a dataset collected by the US EPA.  The EPA researchers measured water quality in randomly selected streams and then characterized associated watershed conditions in the Pacific Northwest.   The main objective of this homework is to understand the patterns in stream water quality and its relationships with the watershed conditions.  Specifically, you are asked to do the followings:
+
+> 1.  Run PCA on water quality variables to identify and characterize major patterns in terms of water quality.
+
+> 2.  Explain the patterns illustrated by PCA by correlating main PC axes to the associated watershed variables.
+
+> 3.	Run RDA on water quality and watershed variables to assess the relationships between water quality in streams and watershed characteristics.
+
+
+## Methods
+
+
+
+## Results
+
+
+
+## Discussion
+
+
+
+____
+
+## Figures & Tables
+
+
+____
+
+# REFERENCES

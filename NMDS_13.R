@@ -1,5 +1,5 @@
 ###Import the data called 'sp_e.csv', diaton species data I collected from Florida Everglades and save it as 'sp'
-sp_e <- read.csv("sp_e.csv")
+sp <- read.csv("sp_e.csv")
 
 dim(sp)
 #run mds in R

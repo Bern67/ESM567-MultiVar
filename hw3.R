@@ -25,8 +25,8 @@ lres <- sapply(lshap, `[`, c("statistic","p.value"))
 t(lres)
 
 #WATER QUALITY MATRIX
-round(var(wq.lg),2) #covariance matrix
-diag(round(var(wq.lg),2)) #show variance only from covariance/var matrix (along diagonal)
+wq.corr<-round(cov(scale(wq.lg)),2) #correlation Matrix
+diag(round(cov(wq.lg),2)) #show variance only from correlation matrix (along diagonal)
 
 require(MASS) #loads the PCA package
 pca <- princomp(scale(wq.lg)) #creates a PC matrix using the correlation matrix
@@ -38,6 +38,8 @@ plot(pca, main="Scree Plot") #Scree plot
 broken.stick(18) #After comparing, keep comp 1 & 2
 
 round(loadings(pca),2) #Check eigenvectors:
+pca$scores
+
 
 #WATERSHED MATRIX
 round(var(ws),2) #covariance matrix

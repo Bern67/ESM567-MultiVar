@@ -43,18 +43,19 @@ boxplot(scale(env), main="Scaled with Z-score")
 boxplot(scale(log(env+1)))
 
 #source cor.matrix function
-var(scale(env)) #calculate correlatin matrix with the standardized data: 
+cor.matrix(scale(env))
+
+cov(scale(env)) #calculate correlatin matrix with the standardized data: 
 #Z-score from -1 to 1 (PCC)
 
-cor.matrix(scale(env))
 
 ev.tn <- env[,c(5,11,12,14)]
 cor.matrix(ev.tn)
 ev.tp <- env[,c(1,3,4,15)]
 cor.matrix(ev.tp)
 
-round(var(env),2) #covariance matrix
-diag(round(var(env),2)) #show variance only from covariance/var matrix (along diagonal)
+round(cov(env),2) #correlation matrix
+diag(round(cor(env),2)) #show variance only from correlation matrix (along diagonal)
 
 require(MASS) #loads the PCA package
 pca <- princomp(scale(env)) #creates a PC matrix using the correlation matrix

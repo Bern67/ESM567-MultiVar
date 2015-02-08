@@ -10,6 +10,7 @@ output:
     toc: yes
   word_document: default
 ---
+_____
 
 ```{r global_options, include=FALSE}
 library(knitr)
@@ -130,7 +131,7 @@ eco3<-dta%>%
   group_by(ECO3)%>%
   summarise(COND_Ave=mean(COND), pH_Ave = mean(PH), NTL_Ave = mean(NTL), TURB_Ave = mean(TURB), AgTOT_Ave = mean(AG_TOT))
    
-knitr::kable(head(eco3), format = 'pandoc', digits=1, padding = 2, caption = 'Mean conductivity, pH, total nitrogen concentration, turbidity, and % of agrigulture in watershed')
+knitr::kable((eco3), format = 'pandoc', digits=1, padding = 2, caption = 'Mean conductivity, pH, total nitrogen concentration, turbidity, and % of agrigulture in watershed')
 ```
 
 ```{r kable3, results='asis'}
@@ -152,7 +153,7 @@ dif <- dta %>%
 knitr::kable(head(dif), format = 'pandoc', digits=1, padding = 2, caption = 'Average COND: conductivity (µS/cm), and NTL: Total nitrogen concentration (mg/L) for each acoregion (ECO3) that have more than 80% forest cover.')
 ```
 
-```{r p, fig.cap="Box plot of conductivity for each ecoregion (ECO3)"}
+```{r p1, fig.cap="Box plot of conductivity for each ecoregion (ECO3)"}
 dta <-read.csv("wemap.csv")
 require(ggplot2)
 p <- ggplot(dta, aes(factor(ECO3), COND))

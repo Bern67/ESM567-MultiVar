@@ -40,7 +40,7 @@ par(norm)
 
 boxplot(env, main = "Not scaled")
 boxplot(scale(env), main="Scaled with Z-score")
-boxplot(scale(log(env+1)))
+boxplot(scale(log(env+1),main="log transformed"))
 
 #source cor.matrix function
 cor.matrix(scale(env))

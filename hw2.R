@@ -76,21 +76,13 @@ round((pca$scores),2) #PC matrix showing site scores for all PCs. How far each i
 
 #---------
 #create shepard diagram
-ev<-round(var(scale(env,scale=F)),0)  #calculate variance-covariance matrix and save it to 'ev'
-e.1<-eigen(ev) #eigen-analysis
-
-e1.value<-round(e.1$values,0) #get all eigenvalues
-e1.value  #print out all eigenvalues
-e1.vector<-round(e.1$vectors,2) #get all eigenvectors
-e1.vector   #print out all eigenvectors, Note: each eigenvector needs to be normalized (each number divides by the vector length)
-e1.value/sum(e1.value) #get proportion of variance explained by each axis
-sum(e1.value) # sum all eigenvalues
-sum(diag(ev))  #sum all variances
-pc.matrix.1<-(as.matrix(scale(env, scale=F)))%*%e.1$vectors #calculate pc.matrix, need to convert the scaled original data into matrix first, "%*%" is for matrix multiplication
-
-##calculate Euclidean distance among sites
+wtr.d<-round(var(scale(env,scale=F)),0)  #calculate variance-covariance matrix and save it to 'wtr.d'
+e.1<-eigen(wtr.d) #eigen-analysis
+pc.matrix.1<-(as.matrix(scale(env, scale=F)))%*%e.1$vectors #calculate pc.matrix
 euc<-dist(scale(env, scale=F))  #calculate Euclidian distance among site for centered original data
 round(euc,2)
 euc.1<-dist(pc.matrix.1[,c(1,2)])  #calculate Euclidian distance among sites in PCA space using only first 2 PCs
 round(euc.1,2)
 plot(euc,euc.1,main="Shepard diagram", xlab="Distance in Multidimensional space", ylab="Distance in Reduced space")
+
+

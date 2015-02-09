@@ -34,12 +34,19 @@ Redundancy analysis is one of the canonical analyses, which allows assessing the
 ## Methods
 
 
+Principal Componenet Analysis (PCA)
+
+
+Redundancy Analysis (RNA)
+
 
 ## Results
 
 
 
 ## Discussion
+
+
 
 
 

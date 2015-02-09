@@ -1,4 +1,4 @@
-#HW3
+#Bern Romey 08Feb15, hw3pca portion
 
 dta <- read.csv("wemap_pnw_rda_HW.csv")
 pnw <- na.omit(dta) #remove missing data

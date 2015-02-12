@@ -75,7 +75,7 @@ round((pca$scores),2) #PC matrix showing site scores for all PCs. How far each i
 #In this case due to broken stick, PC1 and PC2
 
 #---------
-#create shepard diagram
+#create shepard diagram (data used in PCA)
 wtr.d<-round(var(scale(env,scale=F)),0)  #calculate variance-covariance matrix and save it to 'wtr.d'
 e.1<-eigen(wtr.d) #eigen-analysis
 pc.matrix.1<-(as.matrix(scale(env, scale=F)))%*%e.1$vectors #calculate pc.matrix

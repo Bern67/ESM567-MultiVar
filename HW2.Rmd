@@ -262,27 +262,22 @@ pcc <- cor.matrix(env)
 biplot(pca, main = "Biplot", xlab = "Comp.1 (26.3%)", ylab = "Comp.2 (23.8%)")
 ```
 
+Table 1. Correlation matrix for all fifteen sites.
+
 ```{r corr.mx, results='asis'}
 #scaled data
 cov <- round(var(scale(env)),2) # correlation matrix 
 kable((cov), digits=2) #Formats table for output
 ```
 
-Table 1. Correlation matrix for all fifteen sites.
+Table 2.  Component loadings for PC1 & 2.
 
 ```{r load, tidy=TRUE, results='asis'}
 ld <-round(loadings(pca)[,c(1:2)],2)
 kable(ld)
 ```
 
-Table 2.  Component loadings for PC1 & 2.
 
-```{r shap, results='asis'}
-env.lg <-log(env+1)
-lshap <- lapply(env.lg, shapiro.test) #shapiro test on log transformed data
-lres <- sapply(lshap, `[`, c("statistic","p.value"))
-kable(lres)
-```
 
 
 

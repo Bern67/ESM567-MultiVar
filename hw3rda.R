@@ -1,53 +1,98 @@
-#Bern Romey 08Feb15, hw3rda portion.  Lecture 7 slide presentation
+#Bern Romey 08Feb15, hw3rda portion.  Lecture 6 & 7 slide presentation
 
+#Data
+#----
 dta <- read.csv("wemap_pnw_rda_HW.csv")
 pnw <- na.omit(dta) #remove missing data
 rm(dta)
 str(pnw)
 
 #Centered to zero with Z-score
-wq <-scale(pnw[c(2:9, 11:20)]) #water quality variables
-ws <-scale(pnw[c(21,23:24,26:32)])
+wq <-pnw[c(2:20)] #water quality variables (unconstrained)
+ws <-pnw[c(21:34)]#watershed variables (constrained)
 boxplot(wq)
 boxplot(ws)
 #log transformed, centered to Z-score
-wq.l <-scale(log(pnw[c(2:9, 11:20)]+1)) #water quality variables
-ws.l <-scale(log(pnw[c(21,23:24,26:32)]+1)) #watershed variables
-boxplot(wq.l)
-boxplot(ws.l)
+wq.l <-log(wq+1) #water quality variables (dependant/response)
+ws.l <-log(ws+1) #watershed variables (independant/explanatory)
+boxplot(scale(wq.l))
+boxplot(scale(ws.l))
 
+cor.matrix(wq.l)
+cor.matrix(ws.l)
 
 #RDA
+#----
 library(vegan)
 library(MASS)
-mod<-rda(wq.l~ws.l, scale=T)
-mod<-rda(wq.l~.,data=ws.l, scale=T)
-mod
-summary(mod)
-plot(mod)
+mod<-rda(wq.l~.,data=ws.l, scale=T) #Full RDA model
 
+plot(mod, type="n") #triplot
+points(mod, pch=21, col="darkgreen", bg="lightgrey", cex=1.2)
+text(mod, dis="cn", col="red")
+text(mod, "species", col="black", cex=0.8)
+#water quality response variable(Y=black) letters, watershed explanatory variable are (X=red) vectors, and sites are green/grey dots.
 
 
 #1 RDA Full model
+mod #Inertia is variance (Lec 6)
 #How well two matrices are associated? (constrained inertia)
+
+summary(mod) #Species scores is eigenvectors
+
 #Is the RDA model relationship between the two matrices significant?	(anova.cca: global permutation test)
-#Can the RDA model be reduced?(step selection with AIC plus vif)
-                  
+#Can the RDA model be reduced?(step selection with AIC plus VIF)
+anova.cca(mod) #yes, p-value < 0.05                 
+
 #2 RDA reduced model
 #How well two matrices are associated? (constrained inertia)
-#Is the RDA model relationship between the two matrices significant?	(anova.cca: global permutation test)
-#How many RDA axes are significant? (anova.cca: by “axis”)	
+#Is the RDA model relationship between the two matrices significant?  (anova.cca: global permutation test)
+
+#How many RDA axes are significant? (anova.cca: by “axis”)- below
 #How many RDA axes to interpret? (eigenvalues for each axis)
 #What each RDA axis represents? (Biplot scores for constraining variables)
-#What are spatial patterns/trends among sitesin the reduced RDA space? 
+#What are spatial patterns/trends among sites in the reduced RDA space? 
 # Compare spatial patterns/trends among sites between PCA and RDA plots 
 # Compare eigenvalues of RDA1 and PC1 
 # Interpret the relationships between the two matrices using key results
 
-#3 Variance partition with partial RDA:
+#3 Variance partition with partial RDA: (lec 7, slide 42)
 
 #Can we group Xs into big categories (natural vs. anthropogenic)?
 # Which category of Xs is more important than others (varpart) on Ys?
 # What are their interactive effects on Ys?
 
+
+#----
+
+
+vif.cca(mod)#Redundancy among species (Veriance inflation factor)
+# VIF > 4 or 5 suggests multi-collinearity; VIF > 10 is strong evidence 
+#that collinearity is affecting the regression coefficients.
+
+#Selection procedure (AIC approach)- Hybrid approach, search method that compares models sequentially
+
+#Full model (with all Xs):
+rda.ws<-rda(wq.l ~.,data=ws.l,scale=T)
+#Null model (with no Xs):
+rda.0<-rda(wq.l ~1, data=ws.l, scale=T)
+#Hybrid selection:
+rda.1<-step(rda.0, scope=formula(rda.ws))
+
+#Run VIF again on new selection.  See if there are any multi-col > 5
+#If yes, regress and drop higher ones that are correlated
+ws.l1 <-ws.l[-c(2,5)]
+rda.1<-rda(wq.l ~.,data=ws.l1,scale=T)
+vif.cca(rda.1) #All multi-col < 5
+
+#Test if RDA is significant
+anova.cca(rda.ws, step=1000)
+
+#Test if RDA axis is significant
+anova.cca(rda.ws,by='axis', step=1000)
+
+plot(rda.1, type="n") #triplot
+points(rda.1, pch=21, col="darkgreen", bg="lightgrey", cex=1.2)
+text(rda.1, dis="cn", col="red")
+text(rda.1, "species", col="black", cex=0.8)
 

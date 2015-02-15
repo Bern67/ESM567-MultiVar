@@ -1,7 +1,7 @@
 ---
-title: "Hw#3"
+title: "ESM 567 Hw#3"
 author: "Bernard Romey"
-date: 'Due: Monday, February 09, 2015'
+date: 'Due: Monday, February 16th, 2015'
 output:
   word_document:
     fig_caption: yes
@@ -16,35 +16,135 @@ opts_chunk$set(fig.width=6, fig.height=4, fig.path='Figs/',
 
 ```{r dta, echo=FALSE}
 dta <- read.csv("wemap_pnw_rda_HW.csv")
-ws <- na.omit(dta) #remove missing data
+wtr <- na.omit(dta) #remove missing data
 rm(dta)
+wq <- wtr[c(2:20)] #water quality variables.
+wq.l <- log(wq+1)
 ```
+
+```{r cor.matrix, echo=FALSE}
+cor.matrix<-function(x,data=NA,cor.method="pearson",add1to1=F,...){
+  # panel.hist function adds the histogram
+options(warning=F)
+    panel.hist <- function(x)
+  {
+      usr <- par("usr")
+      on.exit(par(usr))
+      par(usr = c(usr[1:2], 0, 1.5) )
+      h <- hist(x, plot = FALSE,breaks=30)
+      breaks <- h$breaks
+      nB <- length(breaks)
+      y <- h$counts
+      y <- y/max(y)
+      rect(breaks[-nB], 0, breaks[-1], y, col="lightblue")
+      box()
+  }
+  panel.cor <- function(x, y, digits=2, prefix="", cex.cor)
+  {
+      usr <- par("usr")
+      on.exit(par(usr))
+      par(usr = c(0, 1, 0, 1))
+      r <- cor(x, y,method="spearman")
+      txt <- format(c(r, 0.123456789), digits=digits)[1]
+      txt <- paste(prefix, txt, sep="")
+      if(missing(cex.cor)) cex <- 0.8/strwidth(txt)
+      text(0.5, 0.5, txt, cex = cex * abs(r))
+  }
+  panel.smooth2<-function(x, y, bg = NA, pch = par("pch"),cex = 1, col.smooth = "red", span = 2/3,iter = 3,plot1to1=add1to1)
+  {
+    points(x, y, pch = pch, cex = cex,...)
+    ok <- is.finite(x) & is.finite(y)
+    if (any(ok)){
+        lines(stats::lowess(x[ok], y[ok], f = span, iter = iter), col = col.smooth)
+        }
+        if(plot1to1){
+          mn<-min(c(x,y),na.rm=T)
+          mx<-max(c(x,y),na.rm=T)
+          new.x<-seq(mn,mx,length.out=10)
+          points(new.x,new.x,type='l',col="blue",lwd=2)
+        }
+  }
+  if (class(x)=="formula"){
+    x<-model.frame(x,data=data)
+
+  }
+  pairs(x,upper.panel=panel.smooth2,lower.panel=panel.cor,diag.panel=panel.hist,
+        cex.labels = 1, font.labels=2)
+  options(warning=T)
+}
+``` 
 
 ## Introduction
 
 Redundancy analysis is one of the canonical analyses, which allows assessing the relationships between two matrices.  In this homework, we analyze a dataset collected by the US EPA.  The EPA researchers measured water quality in randomly selected streams and then characterized associated watershed conditions in the Pacific Northwest.   The main objective of this homework is to understand the patterns in stream water quality and its relationships with the watershed conditions.  Specifically, you are asked to do the followings:
 
-> 1.  Run PCA on water quality variables to identify and characterize major patterns in terms of water quality.
+> 1.  Run PCA on water quality variables (Table 1) to identify and characterize major patterns in terms of water quality.
 
 > 2.  Explain the patterns illustrated by PCA by correlating main PC axes to the associated watershed variables.
 
-> 3.	Run RDA on water quality and watershed variables to assess the relationships between water quality in streams and watershed characteristics.
+> 3.	Run RDA on water quality and watershed variables (Table 1) to assess the relationships between water quality in streams and watershed characteristics.
+
+
+Table 1.  Stream water quality (19 variables) and watershed conditions (14 variables) collected by the US Environmental Protection Agency (EPA) from sampling sites($n=268$) in Washington, Oregon, and Idaho.
 
 
 ## Methods
 
 
-Principal Componenet Analysis (PCA)
+Principal Componenet Analysis (PCA) in R
 
-
-Redundancy Analysis (RNA)
+Redundancy Analysis (RNA) in R
 
 
 ## Results
 
+**PCA**
+
+```{r PCA,echo=F, results='hide'}
+require(MASS) #loads the PCA package
+pca <- princomp(wq.l, cor=TRUE) #creates a PC matrix using the correlation matrix
+summary(pca)
+```
+
+The goal of PCA is to reduce the complexity of a dataset with n observation and p variables (with dependancies) to a small number of synthetic varibles (orthoginal=independant) that represent most of the information in the original dataset.  To express the covariation in many variables into a smaller number of composite synthetic variables (PCs), PCA seeks the strongest linear correlation structure among variables.
+
+For this analysis, most of the water quality variable distributions were skewed to the right, therefore a log transformation was used to normalize the distributions so that they were reasonably unskewed. Once normality was checked, a variance (primary axis)/covariance matrix was calculated that was standardized (Correlation Matrix) to  Z-scores from the original observations using matrix algebra [@poole11] .  The reason for converting the original data to Z-scores is because not all units of measure for the different water quality variables were homogeneous (of the same scale). A PCA analysis was then performed on all eighteen log transformed water quality variables.  
+
+The eigenvalues from the canonical matrix for component one and two were 0.4637 and 0.1470, respectively.  The eigenvalues for the broken stick model indicated that component one and two had higher eigenvalues than what would be observed randomly, so they were retained for analysis (Figure 1). Component one represents 46.4% (eigenvalue 1) of the variability along the primary axis,  while  component two represents 14.7% (eigenvalues 2) of the variation along the secondary component axis.  Thus, both component one and two comprise 61.1% of the variability observed in the data.
+
+The eigenvector matrix is a relative representation of the correlations between variables and components. If the correlation matrix is used in the PCA analysis, the principal componenet loadings are directly proportional to correlations between corresponding variables and principal components [@mcgarigal00].  Although, these proportional correlations are not actual correlatins between original variables and principal components and is the reason why interpretation of the principal component should be primarily based on the actual correlations in the correlation matrix. 
+
+The loadings for each variable on component one and two are shown in table 3.  Conductivity, acid neutralizing capacity , and calculated bicarbonate contribute the most variance to component one at -0.31, respectively. Other variables have a lower contribution, but not by that much.  For example, turbidity and amonium are two of the scond to lowest variance values and are -0.13, respectively.  The concentration of nitrate in the water had the least variance contribution to component one at -0.06. All eigenvectors are negative for componenet one.  These findings for principal component one coroborate with the high correlations for the same variables in the correlation matrix (Table 2).
+
+Total nitrogen concentation had the largest variance contribution (loading) to component two at -0.35.  Turbidity and ammonium contributed the the second largest amount of variance to component two with a variance of -0.33, respectively.  Dissolved silica concentration was the least variance contributor to total variance on component two with a loading of -0.06.
+
+
+
+**RMA**
+
+
+
+
+
 
 
 ## Discussion
+
+**PCA**
+
+Scatterplots of each component scores for each pair of retained components (in this case 1 and 2) are presented in the biplot (Figure 2). Distances among sites in the biplot are approximate to the Euclidean distances among sites in the original multidimensional space.  This means that scores in close proximity are ecologically similar with respect to the defined environmental gradients in both principal components [@mcgarigal00].   Scores on the left side of component one and close the the water quality vectors, are associated with the negative side of the water quality gradient more than scores on the positive side of the gradient.  Projecting a site onto a water quality variable vector in that group of vectors at right angle approximates the position of the site along the variable. 
+
+Nonlinearities will show up as an arched pattern in the distribution of scores.  Since these site scores do not show a defined pattern with a curvilinear shape, than the linear assumption is most likely not violated.
+
+Since all of the water quality variables seem to be somewhat negatively associated with componenet one, it would seem that component one is a negative water quality gradient (Figure 2).  For component two, the gradient seems to be primarily negatively associated with turbidity, total nitrogen concentration, and amonium (Table 2).  Elevated turbidity could be associated with disturbances in the watershed from land use practices.  Water quality gradient for componenet one might also be associated with land use practices.  Principal component one scores are compared with watershed variables in Figure 4.  It looks like principal component one has the highest correlation with precipitation ($r=0.77$) and slope mean ($r=0.58$).
+
+A large proportion of the correlations between variables in the correlation matrix are high (r > 0.5), indicating there is probably redundancy, and making it easier to reduce the dimensinality of the data set (Table 2). 
+
+**RDA**
+
+
+
+
 
 
 
@@ -52,7 +152,53 @@ Redundancy Analysis (RNA)
 
 ____
 
-## Figures & Tables
+## PCA Figures & Tables
+
+Table 2.  Correlation matrix for all 19 water quality variables.
+
+```{r corr.mx, results='asis'}
+#scaled data
+cor <- round(cor(wq.l),2) # correlation matrix 
+kable((cor), digits=2) #Formats table for output
+```
+
+Table 3.  Component loadings for PC1 & PC2.
+
+```{r load, tidy=TRUE, results='asis'}
+ld <-round(loadings(pca)[,c(1:2)],2)
+kable(ld)
+```
+
+
+```{r Scree, fig.cap="Scree plot showing the inertia/variance (eigenvalues) for first 10 principal component."}
+library(vegan)
+screeplot(pca, bstick = TRUE) #inertia= variance n PCA
+``` 
+
+```{r Biplot, fig.height=6, fig.cap="Biplot of principal component 1 & 2 with site scores and water quality variable vectos."}
+biplot(pca, main = "Biplot", xlab = "Comp.1 (46.4%)", ylab = "Comp.2 (14.7%)")
+```
+
+```{r pc1_ws, fig.cap="Correlatin matrix of PC1 compared with watershed variables"}
+ws <-wtr[c(21:34)]
+ws.l <-log(ws+1) #watershed variables
+pc1 <- pca$scores[,1]
+pc1<-as.data.frame(pc1)
+crmx <-cbind(pc1,ws.l)
+cor.matrix(crmx)
+
+```
+
+
+
+
+
+
+## RDA Figures & Tables
+
+
+
+
 
 
 ____

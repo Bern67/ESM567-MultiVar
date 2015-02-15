@@ -5,6 +5,8 @@ env <- na.omit(dta)
 rm(dta)
 env <- env[,-1]
 
+
+#-----
 norm <- par(mfrow=c(4,4))
 qqnorm(env$TPeleo, main="TPeleo")
 qqline(env$TPeleo)
@@ -48,7 +50,6 @@ cor.matrix(scale(env))
 cov(scale(env)) #calculate correlatin matrix with the standardized data: 
 #Z-score from -1 to 1 (PCC)
 
-
 ev.tn <- env[,c(5,11,12,14)]
 cor.matrix(ev.tn)
 ev.tp <- env[,c(1,3,4,15)]
@@ -57,14 +58,17 @@ cor.matrix(ev.tp)
 round(cov(env),2) #correlation matrix
 diag(round(cor(env),2)) #show variance only from correlation matrix (along diagonal)
 
+
+#----
+
 require(MASS) #loads the PCA package
-pca <- princomp(scale(env)) #creates a PC matrix using the correlation matrix
-biplot(pca, expand = 1.05,main = "Biplot", xlab = "Comp.1 (26.3%)", ylab = "Comp.2 (23.8%)")
+pca <- princomp(scale(log(env+1))) #creates a PC matrix using the correlation matrix
+biplot(pca, expand = 1.05,main = "Biplot", xlab = "Comp.1 (27.2%)", ylab = "Comp.2 (23.4%)")
 #Scale for sites(PC matrix-pca$scores) on top, scale for variables (vectors-loadings) along bottom
 summary(pca) #proportion of variance is eigenvalues for each PC
 
-plot(pca, main="Scree Plot") #Scree plot
-broken.stick(15) #After comparing, keep comp 1 & 2
+library(vegan)
+screeplot(pca, bstick = TRUE) #inertia= variance n PCA
 
 round(loadings(pca),2) #Check eigenvectors: length of vector is relative variance and how much it contributes to the PC
 #Principal component loading (pg 50).  The further from zero, the greater the contribution.
@@ -76,13 +80,7 @@ round((pca$scores),2) #PC matrix showing site scores for all PCs. How far each i
 
 #---------
 #create shepard diagram (data used in PCA)
-wtr.d<-round(var(scale(env,scale=F)),0)  #calculate variance-covariance matrix and save it to 'wtr.d'
-e.1<-eigen(wtr.d) #eigen-analysis
-pc.matrix.1<-(as.matrix(scale(env, scale=F)))%*%e.1$vectors #calculate pc.matrix
-euc<-dist(scale(env, scale=F))  #calculate Euclidian distance among site for centered original data
-round(euc,2)
-euc.1<-dist(pc.matrix.1[,c(1,2)])  #calculate Euclidian distance among sites in PCA space using only first 2 PCs
-round(euc.1,2)
-plot(euc,euc.1,main="Shepard diagram", xlab="Distance in Multidimensional space", ylab="Distance in Reduced space")
-
+euc<-dist(scale(log(env+1))) #Calculate Euclidian distance among sites centered=scale to Z-score (multidimentional spcae)
+euc.1<-dist(pca$scores[,c(1,2)]) #calculate Euclidian distance among sites in PCA space using only first 2 PCs (reduced space)
+plot(euc,euc.1,main="PC=2", xlab="Distance in Multidimensional space", ylab="Distance in Reduced space")  
 

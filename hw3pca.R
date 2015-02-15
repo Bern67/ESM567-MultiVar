@@ -1,63 +1,64 @@
 #Bern Romey 08Feb15, hw3pca portion
 
+#DATA
+#----
 dta <- read.csv("wemap_pnw_rda_HW.csv")
-pnw <- na.omit(dta) #remove missing data
-rm(dta)
-str(pnw)
+wtr <- na.omit(dta) #remove missing data
+wq <- wtr[c(2:20)] #water quality variables.
+wq.l <- log(wq+1)
 
-wtr <- pnw[c(2:9, 11:20)] #numeric variables. Watershed variables (21,23:24,26:32)
-wtr.lg <- log(wtr+1)
+#Normality
+#----
+cor.matrix(wq)
+cor.matrix(wq.lg)#log transformed is much better for normality.  
+#Most of the data is skewed to the right, log transformation fixes that.
 
-cor.matrix(wtr)
-cor.matrix(wtr.lg)
+round(cor(wq.l),2)#Correlatin matrix of log transformed water quality data.  Cor centers data to Z-score.
 
-lshap <- lapply(wtr, shapiro.test) #shapiro test on log transformed data
-lres <- sapply(lshap, `[`, c("statistic","p.value"))
-t(lres)
-
-lshap <- lapply(wtr.lg, shapiro.test) #shapiro test on log transformed data
-lres <- sapply(lshap, `[`, c("statistic","p.value"))
-t(lres)
-
-round(cor(wtr.lg),2) #correlation Matrix
-diag(round(cov(wtr.lg),2)) #show variance only from correlation matrix (along diagonal)
-
+#----
 #PCA
+#----
 require(MASS) #loads the PCA package
-pca <- princomp(wtr.lg, cor=TRUE) #creates a PC matrix using the correlation matrix
-biplot(pca, main = "Biplot", xlab = "Comp.1 (48.8%)", ylab = "Comp.2 (14.8%)")
+pca <- princomp(wq.l, cor=TRUE) #creates a PC matrix using the correlation matrix
+biplot(pca, main = "Biplot", xlab = "Comp.1 (46.4%)", ylab = "Comp.2 (14.7%)")
 #Scale for sites(PC matrix-pca$scores) on top, scale for variables (vectors-loadings) along bottom
 summary(pca) #proportion of variance is eigenvalues for each PC
 # How well these PCs represent the original data in term of variance and why? (eigenvalues)
 
-broken.stick(18) #After comparing, 1 & 2 above broken.strick
-plot(pca, main="Scree Plot") #Scree plot
+library(vegan)
+screeplot(pca, bstick = TRUE, main="PCA", npcs = 8) #inertia= variance in PCA
 
 round(loadings(pca),2) #Check eigenvectors: All very similar, look at groups instead
 #What does each PC mean in terms of original variables? (eigenvectors)
+round(loadings(pca)[,c(1:2)],2) #Loading for PC1 & 2 only
 
-pca$scores
+pca$scores[,1]
+hist(pca$scores[,1])
 
+#Shepard diagram
 ##calculate Euclidean distance among sites
-wtr.d<-round(var(scale(wtr.lg,scale=F)),0)  #calculate variance-covariance matrix and save it to 'wtr.d'
-e.1<-eigen(wtr.d) #eigen-analysis
-pc.matrix.1<-(as.matrix(scale(wtr.lg, scale=F)))%*%e.1$vectors #calculate pc.matrix
-euc<-dist(scale(wtr.lg, scale=F))  #calculate Euclidian distance among site for centered original data
-round(euc,2)
-euc.1<-dist(pc.matrix.1[,c(1,2)])  #calculate Euclidian distance among sites in PCA space using only first 2 PCs
-round(euc.1,2)
-plot(euc,euc.1,main="Shepard diagram", xlab="Distance in Multidimensional space", ylab="Distance in Reduced space")
 #The plot shows the distortion that occurs when converting from multidimentional space to two dimentions.
 
+euc<-dist(scale(wq.l)) #Calculate Euclidian distance among sites scale=centered to Z-score (multidimentional spcae). Check transformation and matrix used.
+euc.1<-dist(pca$scores[,c(1,2)]) #calculate Euclidian distance among sites in PCA space using only first 2 PCs (reduced space).
+plot(euc,euc.1,main="PC=2", xlab="Distance in Multidimensional space", ylab="Distance in Reduced space") #x=euc, y=euc.1  
+
+
+#Homework Questions:
 #What are spatial patterns/trends among sites in the reduced PCA space?
-#(bubble plots, use other categorical grouping variables, etc.) 
+#(bubble plots, use other categorical grouping variables, etc.)  
 
+#Regress PC 1 with watershed variables (cor.matrix)- Lec 7, slide 16
+#use principal component scores and merge with watershed df.
 
-
-#Regress PC 1 or 2 with additional explanatory variables   
-
-
+ws <-wtr[c(21:34)]
+ws.l <-log(ws+1) #watershed variables
+pc1 <- pca$scores[,1]
+pc1<-as.data.frame(pc1)
+crmx <-cbind(pc1,ws.l)
+cor.matrix(crmx)
 #-------
+
 
 
 

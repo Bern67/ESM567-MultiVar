@@ -6,7 +6,6 @@
 ###The hypothesis: is there statistical difference in terms of nutrients among the 3 diatom-based groups
 
 
-
 head(everglade)
 x<-as.factor(everglade[,1]) #independent variable (factor)
 y<-as.matrix(everglade[,-c(1,10)]) #multivariate response variable matrix
@@ -74,7 +73,7 @@ mod.log<-manova(log(y+1)~x)
 chisplot(resid(mod.log))
 mshapiro.test(t(resid(mod.log)))
 
-#refit manova exclusing 2 datapoints (7,29)
+#refit manova excluding 2 datapoints (7,29)
 ever.30<-everglade[-c(7,29),]
 x.30<-as.factor(ever.30[,1])
 y.30<-as.matrix(ever.30[,c(2:9)])

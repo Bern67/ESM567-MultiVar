@@ -41,7 +41,7 @@ hist(pca$scores[,1])
 
 euc<-dist(scale(wq.l)) #Calculate Euclidian distance among sites scale=centered to Z-score (multidimentional spcae). Check transformation and matrix used.
 euc.1<-dist(pca$scores[,c(1,2)]) #calculate Euclidian distance among sites in PCA space using only first 2 PCs (reduced space).
-plot(euc,euc.1,main="PC=2", xlab="Distance in Multidimensional space", ylab="Distance in Reduced space") #x=euc, y=euc.1  
+plot(euc,euc.1,main="Shepard Diagram (PC=2)", xlab="Distance in Multidimensional space", ylab="Distance in Reduced space") #x=euc, y=euc.1  
 
 
 #Homework Questions:
@@ -50,15 +50,10 @@ plot(euc,euc.1,main="PC=2", xlab="Distance in Multidimensional space", ylab="Dis
 
 #Regress PC 1 with watershed variables (cor.matrix)- Lec 7, slide 16
 #use principal component scores and merge with watershed df.
-
 ws <-wtr[c(21:34)]
-ws.l <-log(ws+1) #watershed variables
+ws.l <-scale(log(ws+1)) #watershed variables
 pc1 <- pca$scores[,1]
 pc1<-as.data.frame(pc1)
 crmx <-cbind(pc1,ws.l)
 cor.matrix(crmx)
-#-------
-
-
-
 

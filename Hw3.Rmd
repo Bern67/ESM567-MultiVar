@@ -87,13 +87,60 @@ Redundancy analysis is one of the canonical analyses, which allows assessing the
 
 Table 1.  Stream water quality (19 variables) and watershed conditions (14 variables) collected by the US Environmental Protection Agency (EPA) from sampling sites($n=268$) in Washington, Oregon, and Idaho.
 
-
 ## Methods
 
+**Principal Componenet Analysis (PCA) using R statistical software**
 
-Principal Componenet Analysis (PCA) in R
+*Evaluation:*
 
-Redundancy Analysis (RNA) in R
+* Center the data with Z-score, and transform if distribution is non-normal, or if different measurement units between vaiables.  PCA requires robust multinormal variable distributions.  Make sure the number of variables is less than the number of observations/sample size.  Only use quantitative data.
+* Calculate variance/covariance matrix (S)
+* Eigen-analysis ($S = eΛe’$) where $e=eigenvector matrix$,and $Λ=eigenvalue matrix$
+* Calculate site scores ($A=Ye$, coordinates of each site in a PCA plot)
+* Plot site scores and eigenvectors (Biplot), and interpet results
+* Check number of principal components to evaluate (broken-stick model)
+* Check for amount of distortion when converting from multidimentional space to two dimentions with a Shepard diagram
+
+*Interpretation:*
+
+* PCA biplot
+* Variance/Covariance matrix or correlation matrix
+* Number of PCs interpreted (broken stick)
+* % of variance explained by each interpreted PC (eigenvalues)
+* Eigenvectors (loadings)
+
+**Redundancy Analysis (RNA) using R statistical software**
+
+*Evaluation:*
+
+Run direct gradient analysis:
+
+* RDA full model (with all Xs) 
+* RDA reduced model 
+* Variance partition with partial RDA
+
+*Interpretation:*
+
+RDA full model
+
+* Constrained inertia (how well two matrices are related)
+* Is relationship significant (ANOVA)
+* Can the model be reduced
+
+RDA reduced model
+
+* Constrained inertia
+* Is model relationship significant
+* How many axis are significant
+* How many axis to interpret
+* What each RDA axis represents (scores)
+* Triplot
+
+Variance partition with partial RDA
+
+* Can we group Xs into big categories (natural vs. anthropogenic)?
+* Which category of Xs is more important than	others (varpart) on Ys?
+* What are their interactive effects on Ys?
 
 
 ## Results
@@ -110,18 +157,31 @@ The goal of PCA is to reduce the complexity of a dataset with n observation and 
 
 For this analysis, most of the water quality variable distributions were skewed to the right, therefore a log transformation was used to normalize the distributions so that they were reasonably unskewed. Once normality was checked, a variance (primary axis)/covariance matrix was calculated that was standardized (Correlation Matrix) to  Z-scores from the original observations using matrix algebra [@poole11] .  The reason for converting the original data to Z-scores is because not all units of measure for the different water quality variables were homogeneous (of the same scale). A PCA analysis was then performed on all eighteen log transformed water quality variables.  
 
-The eigenvalues from the canonical matrix for component one and two were 0.4637 and 0.1470, respectively.  The eigenvalues for the broken stick model indicated that component one and two had higher eigenvalues than what would be observed randomly, so they were retained for analysis (Figure 1). Component one represents 46.4% (eigenvalue 1) of the variability along the primary axis,  while  component two represents 14.7% (eigenvalues 2) of the variation along the secondary component axis.  Thus, both component one and two comprise 61.1% of the variability observed in the data.
+The eigenvalues from the canonical matrix for component one and two were 0.4637 and 0.1470, respectively.  The eigenvalues for the broken stick model indicated that component one and two had higher eigenvalues than what would be observed randomly, so they were retained for analysis (Figure 1). Component one represents 46.4% (eigenvalue 1) of the variability along the primary axis,  while  component two represents 14.7% (eigenvalues 2) of the variation along the secondary component axis.  Thus, both component one and two comprise 61.1% of the variability observed in the data.  
+
+The Euclidean distance among objects in multidimentional and reduced space for original descriptors are compared in **figure 3**. The Shepard diagram shows the distortion that occurs when converting from multidimentional space to two dimentions.  Projection in reduced space accounts for a high fraction of variance, and the relative positions of the majority of objects are similar.
 
 The eigenvector matrix is a relative representation of the correlations between variables and components. If the correlation matrix is used in the PCA analysis, the principal componenet loadings are directly proportional to correlations between corresponding variables and principal components [@mcgarigal00].  Although, these proportional correlations are not actual correlatins between original variables and principal components and is the reason why interpretation of the principal component should be primarily based on the actual correlations in the correlation matrix. 
 
-The loadings for each variable on component one and two are shown in table 3.  Conductivity, acid neutralizing capacity , and calculated bicarbonate contribute the most variance to component one at -0.31, respectively. Other variables have a lower contribution, but not by that much.  For example, turbidity and amonium are two of the scond to lowest variance values and are -0.13, respectively.  The concentration of nitrate in the water had the least variance contribution to component one at -0.06. All eigenvectors are negative for componenet one.  These findings for principal component one coroborate with the high correlations for the same variables in the correlation matrix (Table 2).
+The loadings for each variable on component one and two are shown in **table 3**.  Conductivity, acid neutralizing capacity , and calculated bicarbonate contribute the most variance to component one at -0.31, respectively. Other variables have a lower contribution, but not by that much.  For example, turbidity and amonium are two of the scond to lowest variance values and are -0.13, respectively.  The concentration of nitrate in the water had the least variance contribution to component one at -0.06. All eigenvectors are negative for componenet one.  These findings for principal component one coroborate with the high correlations for the same variables in the correlation matrix (Table 2).
 
 Total nitrogen concentation had the largest variance contribution (loading) to component two at -0.35.  Turbidity and ammonium contributed the the second largest amount of variance to component two with a variance of -0.33, respectively.  Dissolved silica concentration was the least variance contributor to total variance on component two with a loading of -0.06.
 
+Water quality variable vectors with a small cosine angle to the component axis have a larger variance contribution, dependant on the lenght of the vector. With the exception of water color and SO4 concentration, the majority of the variance contributing to principal component one are very similar as observed in the biplot with the length of the vectors being of comperable length (Figure 2).  The water quality variable vectors below dissolved orgainc matter (DOC) have less variance contribution to component one due to their angle associated with the component one axis.  
 
+**RDA**
 
-**RMA**
+As with PCA above, the first step in the RDA analysis was to make sure that the variables for water qualtiy and watershed were appropriate for the analysis.  Both the explanatory (watershed) and response (water qualtiy) variables were log transformed and scaled/centerd to Z-scores for the purpose of normalizing the ditributions.
 
+*Full RDA model*
+
+How well two matrices are associated? 
+  	          (constrained inertia)
+
+Is the RDA model (relationship between the two matrices significant?	
+			 (anova.cca: global permutation test)
+	Can the RDA model be reduced?
+			 (step selection with AIC plus vif)
 
 
 
@@ -136,9 +196,18 @@ Scatterplots of each component scores for each pair of retained components (in t
 
 Nonlinearities will show up as an arched pattern in the distribution of scores.  Since these site scores do not show a defined pattern with a curvilinear shape, than the linear assumption is most likely not violated.
 
-Since all of the water quality variables seem to be somewhat negatively associated with componenet one, it would seem that component one is a negative water quality gradient (Figure 2).  For component two, the gradient seems to be primarily negatively associated with turbidity, total nitrogen concentration, and amonium (Table 2).  Elevated turbidity could be associated with disturbances in the watershed from land use practices.  Water quality gradient for componenet one might also be associated with land use practices.  Principal component one scores are compared with watershed variables in Figure 4.  It looks like principal component one has the highest correlation with precipitation ($r=0.77$) and slope mean ($r=0.58$).
+Since all of the water quality variables seem to be somewhat negatively associated with componenet one, it would seem that component one is a negative water quality gradient (Figure 2).  For component two, the gradient seems to be primarily negatively associated with turbidity, total nitrogen concentration, and amonium (Table 2).  Elevated turbidity could be associated with disturbances in the watershed from land use practices.  Water quality gradient for componenet one might also be associated with land use practices.  
 
 A large proportion of the correlations between variables in the correlation matrix are high (r > 0.5), indicating there is probably redundancy, and making it easier to reduce the dimensinality of the data set (Table 2). 
+
+*Hypothesis*
+
+After evaluating the PCA analysis information, it looks like there are pattern in water quality that may be associated with other vaiables that are not included in the PCA.  When the principal component one scores are compared with watershed variables (*Figure 4*), principal component one has the highest correlation with precipitation ($r=0.77$), mean watershed slope ($r=0.58$), and a negative correlation with riparian disturbance index ($r=0.44$).  
+
+Some hypothesis that could be tested with the RDA analysis are:
+
+$H_o$: There is no significant relationship between the water quality and watershed matrices
+$H_o$: There are no significant RDA axis
 
 **RDA**
 
@@ -169,7 +238,6 @@ ld <-round(loadings(pca)[,c(1:2)],2)
 kable(ld)
 ```
 
-
 ```{r Scree, fig.cap="Scree plot showing the inertia/variance (eigenvalues) for first 10 principal component."}
 library(vegan)
 screeplot(pca, bstick = TRUE) #inertia= variance n PCA
@@ -181,20 +249,23 @@ biplot(pca, main = "Biplot", xlab = "Comp.1 (46.4%)", ylab = "Comp.2 (14.7%)")
 
 ```{r pc1_ws, fig.cap="Correlatin matrix of PC1 compared with watershed variables"}
 ws <-wtr[c(21:34)]
-ws.l <-log(ws+1) #watershed variables
+ws.l <-scale(log(ws+1)) #watershed variables
 pc1 <- pca$scores[,1]
 pc1<-as.data.frame(pc1)
 crmx <-cbind(pc1,ws.l)
 cor.matrix(crmx)
-
 ```
 
-
-
-
-
+```{r shep, fig.cap="Shepard plot showing the distortion that occurs when converting from multidimentional space to two dimentions"}
+euc<-dist(scale(wq.l)) #Calculate Euclidian distance among sites scale=centered to Z-score (multidimentional spcae). Check transformation and matrix used.
+euc.1<-dist(pca$scores[,c(1,2)]) #calculate Euclidian distance among sites in PCA space using only first 2 PCs (reduced space).
+plot(euc,euc.1,main="Shepard Diagram (PC=2)", xlab="Distance in Multidimensional space", ylab="Distance in Reduced space") #x=euc, y=euc.1  
+```
 
 ## RDA Figures & Tables
+
+
+
 
 
 

@@ -21,6 +21,7 @@ boxplot(scale(ws.l))
 cor.matrix(wq.l)
 cor.matrix(ws.l)
 
+
 #RDA
 #----
 library(vegan)
@@ -42,31 +43,12 @@ summary(mod) #Species scores is eigenvectors
 
 #Is the RDA model relationship between the two matrices significant?	(anova.cca: global permutation test)
 #Can the RDA model be reduced?(step selection with AIC plus VIF)
-anova.cca(mod) #yes, p-value < 0.05                 
-
-#2 RDA reduced model
-#How well two matrices are associated? (constrained inertia)
-#Is the RDA model relationship between the two matrices significant?  (anova.cca: global permutation test)
-
-#How many RDA axes are significant? (anova.cca: by “axis”)- below
-#How many RDA axes to interpret? (eigenvalues for each axis)
-#What each RDA axis represents? (Biplot scores for constraining variables)
-#What are spatial patterns/trends among sites in the reduced RDA space? 
-# Compare spatial patterns/trends among sites between PCA and RDA plots 
-# Compare eigenvalues of RDA1 and PC1 
-# Interpret the relationships between the two matrices using key results
-
-#3 Variance partition with partial RDA: (lec 7, slide 42)
-
-#Can we group Xs into big categories (natural vs. anthropogenic)?
-# Which category of Xs is more important than others (varpart) on Ys?
-# What are their interactive effects on Ys?
-
+anova.cca(mod) #yes, p-value = 0.001                 
 
 #----
 
-
-vif.cca(mod)#Redundancy among species (Veriance inflation factor)
+#Can the RDA model be reduced?
+vif.cca(mod)#Redundancy among species (Veriance Inflation Factor)
 # VIF > 4 or 5 suggests multi-collinearity; VIF > 10 is strong evidence 
 #that collinearity is affecting the regression coefficients.
 
@@ -79,20 +61,31 @@ rda.0<-rda(wq.l ~1, data=ws.l, scale=T)
 #Hybrid selection:
 rda.1<-step(rda.0, scope=formula(rda.ws))
 
+#----
+
 #Run VIF again on new selection.  See if there are any multi-col > 5
 #If yes, regress and drop higher ones that are correlated
-ws.l1 <-ws.l[-c(2,5)]
+ws.l1 <-ws.l[,-c(2,5)]
 rda.1<-rda(wq.l ~.,data=ws.l1,scale=T)
 vif.cca(rda.1) #All multi-col < 5
 
-#Test if RDA is significant
-anova.cca(rda.ws, step=1000)
+#2 RDA reduced model
+#How well two matrices are associated? (constrained inertia)
+rda.1 #Inertia is variance (Lec 6)
+#How well two matrices are associated? (constrained inertia)
+summary(rda.1)#Species scores is eigenvectors
 
-#Test if RDA axis is significant
+
+#Is the reduced RDA model relationship between the two matrices significant?  (anova.cca: global permutation test)
+anova.cca(rda.1, step=1000)
+
+#How many RDA axes are significant? (anova.cca: by “axis”)
 anova.cca(rda.ws,by='axis', step=1000)
 
 plot(rda.1, type="n") #triplot
 points(rda.1, pch=21, col="darkgreen", bg="lightgrey", cex=1.2)
 text(rda.1, dis="cn", col="red")
 text(rda.1, "species", col="black", cex=0.8)
+
+
 

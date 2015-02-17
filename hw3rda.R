@@ -87,5 +87,5 @@ points(rda.1, pch=21, col="darkgreen", bg="lightgrey", cex=1.2)
 text(rda.1, dis="cn", col="red")
 text(rda.1, "species", col="black", cex=0.8)
 
-
+round(coef(rda.1)[,c(1:2)],3)
 

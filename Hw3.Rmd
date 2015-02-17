@@ -88,6 +88,12 @@ library(MASS)
 mod<-rda(wq.l~.,data=ws.l, scale=T) #Full RDA model
 ```
 
+```{r rda.1, results='hide', echo=FALSE}
+ws.l1 <-ws.l[-c(2,5)]
+rda.1<-rda(wq.l ~.,data=ws.l1,scale=T)
+```
+
+
 ## Introduction
 
 Redundancy analysis is one of the canonical analyses, which allows assessing the relationships between two matrices.  In this homework, we analyze a dataset collected by the US EPA.  The EPA researchers measured water quality in randomly selected streams and then characterized associated watershed conditions in the Pacific Northwest.   The main objective of this homework is to understand the patterns in stream water quality and its relationships with the watershed conditions.  Specifically, you are asked to do the followings:
@@ -150,13 +156,6 @@ RDA reduced model
 * What each RDA axis represents (scores)
 * Triplot interpretation
 
-Variance partition with partial RDA
-
-* Can we group Xs into big categories (natural vs. anthropogenic)?
-* Which category of Xs is more important than	others (varpart) on Ys?
-* What are their interactive effects on Ys?
-
-
 ## Results
 
 **PCA results**
@@ -183,47 +182,25 @@ As with PCA above, the first step in the RDA analysis was to make sure that the 
 
 *Full RDA model*
 
-An overall test of significance showed that the canonical relationship between the water quality and watershed matrices was significant ($p=0.001) after 999 permutations (*Table RDA1*).  The proportion of variance explained by all the explanatory variables (Watershed) was 0.4659.  
+An overall test of significance showed that the canonical relationship between the water quality and watershed matrices was significant ($p=0.001) after 999 permutations (*Table 4*).  The proportion of variance explained by all the explanatory variables (Watershed) was 0.4659.  
 
 *Reduced RDA model*
 
 I then used a step selection with the AIC approach plus variance inflation factor (VIF) to see if the RDA model could be reduced to fewer variables.  The VIF revealed that the watershed variable straight-line distance to ocean (KM_SEA) had a VIF of 9.27 suggesting multi-collinearity among watershed variables.
-After running the selection procedure (AIC approach) Hybrid approach; a search method that compares models sequentially, the recomended reduced model was to remove the straight-line distance to ocean and watershed aspect variables leaving the remaining 12 watershed variables in the reduced model.  This reduces the redundancy among watershed variables and helps reduce multi-collinearity (predictor vaiabls correlated among themselves).
+After running the selection procedure using the Aikaike Information Criterion (AIC) approach; a search method that compares models sequentially, the recomended reduced model was to remove the straight-line distance to ocean and watershed aspect variables leaving the remaining 12 watershed variables in the reduced model.  This reduces the redundancy among watershed variables and helps reduce multi-collinearity (predictor vaiabls correlated among themselves).
 
-Checking the reduced model VIF showed that all reduced model variables had a VIF < 5 indicating multi-colinearity had been reduced, and the AIC value starting at 790.11 was reduced to 648.50.  The proportion of variance explained by all the explanatory variables in the reduced RDA was 0.4609.  An overall test of signifiacance (*Table RDA2*) showed that the relationship between the reduced watershed matrix and the water quality matrix was significant ($p=0.001$ after 1000 permutations).  Six of the fourteen possible RDA axes were found to be significant (*Table RDA3*) with $p-values < 0.05$.  Only the first two of the RDA axis were used for interpetaion due to their eigenvalues being 6.18 and 1.46, respectively.
+Checking the reduced model VIF showed that all reduced model variables had a VIF < 5 indicating multi-colinearity had been reduced, and the AIC value starting at 790.11 was reduced to 648.50.  The proportion of variance explained by all the explanatory variables in the reduced RDA was 0.4609.  An overall test of signifiacance (*Table 5*) showed that the relationship between the reduced watershed matrix and the water quality matrix was significant ($p=0.001$ after 1000 permutations).  Six of the fourteen possible RDA axes were found to be significant (*Table 6*) with $p-values < 0.05$.  Only the first two of the RDA axis were used for interpetaion due to their eigenvalues being 6.18 and 1.46, respectively.
 
-Table RDA1. ANOVA test if the *full RDA model* relationship between the two matrices significant. 
-
-```{r anova, results='asis'}
-kable(anova.cca(mod))
-```
-
-```{r rda.1, results='hide', echo=FALSE}
-ws.l1 <-ws.l[-c(2,5)]
-rda.1<-rda(wq.l ~.,data=ws.l1,scale=T)
-```
-
-Table RDA2. ANOVA test if the *reduced RDA model* relationship between the two matrices significant.
-
-```{r anova2, results='asis'}
-kable(anova.cca(rda.1, step=1000))
-```
-
-Table RDA3.  ANOVA test for how many RDA axes are significant.
-
-```{r  anova3, results='asis'}
-kable(anova.cca(rda.1,by='axis', step=1000))
-```
 
 ## Discussion
 
 **PCA**
 
-Scatterplots of each component scores for each pair of retained components (in this case 1 and 2) are presented in the biplot (Figure 2). Distances among sites in the biplot are approximate to the Euclidean distances among sites in the original multidimensional space.  This means that scores in close proximity are ecologically similar with respect to the defined environmental gradients in both principal components [@mcgarigal00].   Scores on the left side of component one and close the the water quality vectors, are associated with the negative side of the water quality gradient more than scores on the positive side of the gradient.  Projecting a site onto a water quality variable vector in that group of vectors at right angle approximates the position of the site along the variable. 
+Scatterplots of each component scores for each pair of retained components (in this case 1 and 2) are presented in the biplot (*Figure 2*). Distances among sites in the biplot are approximate to the Euclidean distances among sites in the original multidimensional space.  This means that scores in close proximity are ecologically similar with respect to the defined environmental gradients in both principal components [@mcgarigal00].   Scores on the left side of component one and close the the water quality vectors, are associated with the negative side of the water quality gradient more than scores on the positive side of the gradient.  Projecting a site onto a water quality variable vector in that group of vectors at right angle approximates the position of the site along the variable. 
 
 Nonlinearities will show up as an arched pattern in the distribution of scores.  Since these site scores do not show a defined pattern with a curvilinear shape, than the linear assumption is most likely not violated.
 
-Since all of the water quality variables seem to be somewhat negatively associated with component one, it would seem that component one is a negative water quality gradient (Figure 2).  For component two, the gradient seems to be primarily negatively associated with turbidity, total nitrogen concentration, and amonium (Table 2).  Elevated turbidity could be associated with disturbances in the watershed from land use practices.  Water quality gradient for component one might also be associated with land use practices.  
+Since all of the water quality variables seem to be somewhat negatively associated with component one, it would seem that component one is a water quality gradient (*Figure 2*).  For component two, the gradient seems to be primarily negatively associated with turbidity, total nitrogen concentration, and amonium (*Table 2*).  Elevated turbidity could be associated with disturbances in the watershed from land use practices.  Water quality gradient for component one might also be associated with land use practices.  
 
 A large proportion of the correlations between variables in the correlation matrix are high (r > 0.5), indicating there is probably redundancy, and making it easier to reduce the dimensionality of the data set (Table 2). 
 
@@ -244,40 +221,21 @@ $H_o$: There are no significant RDA axis
 
 **RDA**
 
+This analysis produced 12 canonical axes ($Eigenvalues = RDA's$) and 19 aditional unconstrained axes for the residuals.  When the constrained variance is expressed as a proportion, it is equivalent to the $R^2$ in multiple regression.  Since the accumulation of explanatory variables inflates the explained variance due to random correlations, it is best to use the adjusted $R^2$ instead. The cumulative contribution to the variance of the water quality data (unconstrained) is the proportion of the total variance explained by the RDA ($adj R^2$). Twelve of the watershed variables(constrained) explained approximately `r  round(RsquareAdj(rda.1)$r.squared,2)`($adj. R^2$) of the variance in water quality. The remaining unconstrained variance left in the residuals not explained by the watershed variables was 53.9%.  The residual PC1 (3.28) has an eigenvalue greater than RDA2 (1.45), indicating that the first residual axis of the data has more variance than some of the constrained axis that can be explained by the watershed variables.  
 
-#How many RDA axes to interpret? (eigenvalues for each axis)
+In the final reduced RDA, only the first two of the RDA axis were used for interpetaion due to their eigenvalues being 6.18 and 1.46, respectively (*Table 4*).  Their proportion of contribution to the variance was `r round(.3246+.07615,2)`, with RDA1 and RDA2 contributing 0.33 and 0.08 variance, respectively (*Figure 5*).  
 
-Only the first two of the RDA axis were used for interpetaion due to their eigenvalues being 6.18 and 1.46, respectively (Table RDA4).  Twelve of the watershed variables explained approximately 46.1 percent of the variance in water quality.  
+The primary RDA axis is most likely a watershed disturbance scale, whereas the secondary RDA axis is mainly an elevation scale that is negatively correlated with population density.  
 
-What each RDA axis represents? (Triplot scores for constraining variables) - Triplot
+In the reduced RDA space water quality variables calcium, conductivity, Magnesium, sodium, total phosphorus conentratino, dissolved silica concentration, and total suspended solids are all primarlily correlated with % of reangeland and road density (*Figure 5*).  This again indicates that RDA1 axis is most likely a watershed disturbance gradient.  The secondary population density/elevation gradient is  correlated with nitrate.  Percent of agriculture in watershed is primarily correlated with turbidity, Ammonium, and total nitrogen concentration.  In general, all the water quality variables are between percent of total range in the watershed and population denstiy indicating that the water quality is primarily influanced by anthropocentric factors.  The SO4 concentration and water color have short projections, indicating they are most likely present over most proportions of the watershed, or related to other ecological paramaters not included in this analysis.
 
-The primary RDA axis is correlated positively with percent of range and agraculture in the watershed, road density, and riparian disturbance index, and negatively with percent of forest land, slope mean, and precipitation.  The secondary axis is correlated positievly primarily with mean elevation, and negatively with population density, percent total agraculture, and annual mean precipitation.  The primary RDA axis is most likely a watershed disturbance scale, whereas the secondary RDA axis is an elevation scale.
+The initial PCA explained 60.1% of the variance in the data.  Of the remaining 39.9% variance, the RDA model explains 46.0%.  Component RDA1 and RDA2 represent 41% of the total 46% contribution variance, and 16.4% of that was remaining in the PCA 39.9%.   Thus, the PCA and the RDA model account for approximately 76.5% of the interpreted variation in the data. 
 
+Further analysis behond the scope of this assignment could include varaince paritioning with partial RDA.  Some of the question that could be addressed with variance partitioning would include:
 
-What are spatial patterns/trends among sites in the reduced RDA space? - Triplot
-
-
-
-Compare spatial patterns/trends among sites between PCA and RDA plots 
-
-
-Compare eigenvalues of RDA1 and PC1 
-
-
-Interpret the relationships between the two matrices using key results
-
-
-#3 Variance partition with partial RDA: (lec 7, slide 42)
-
-Can we group Xs into big categories (natural vs. anthropogenic)?
-
-Which category of Xs is more important than others (varpart) on Ys?
-
-What are their interactive effects on Ys?
-
-
-
-
+* Can water quality be grouped  into big categories (natural vs. anthropogenic)?
+* Which category of water quality is more important than others (varpart) regarding watershed variables?
+* What are water qualtiy variables interactive effects on watershed variables?
 
 
 ____
@@ -309,7 +267,6 @@ biplot(pca, main = "Biplot", xlab = "Comp.1 (46.4%)", ylab = "Comp.2 (14.7%)")
 ```
 
 
-
 ```{r pc1_ws, fig.cap="Correlatin matrix of PC1 compared with watershed variables"}
 ws <-wtr[c(21:34)]
 ws.l <-scale(log(ws+1)) #watershed variables
@@ -327,22 +284,27 @@ plot(euc,euc.1,main="Shepard Diagram (PC=2)", xlab="Distance in Multidimensional
 
 ## RDA Figures & Tables
 
-
-```{r RDA1, results='hide', echo=FALSE}
-
-rda.1<-rda(wq.l ~.,data=ws.l1,scale=T)
-```
-
-```{r triplot, fig.cap="Triplot of ..."}
+```{r triplot, fig.cap="Triplot of watershed (blue) and water quality variables (red), with site scores (black)"}
 plot(rda.1) #triplot
 ```
 
+Table 4. ANOVA test if the *full RDA model* relationship between the two matrices significant. 
 
+```{r anova, results='asis'}
+kable(anova.cca(mod))
+```
 
+Table 5. ANOVA test if the *reduced RDA model* relationship between the two matrices significant.
 
+```{r anova2, results='asis'}
+kable(anova.cca(rda.1, step=1000))
+```
 
+Table 6.  ANOVA test for how many RDA axes are significant.
 
-
+```{r  anova3, results='asis'}
+kable(anova.cca(rda.1,by='axis', step=1000))
+```
 
 ____
 

@@ -5,6 +5,7 @@
 ###I include this categorical variable in the dataset and save the data as 'everglade'
 ###The hypothesis: is there statistical difference in terms of nutrients among the 3 diatom-based groups
 
+everglade<-read.csv("e1.csv",header=T)
 
 head(everglade)
 x<-as.factor(everglade[,1]) #independent variable (factor)
